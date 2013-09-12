@@ -2,6 +2,8 @@ const Lang = imports.lang;
 const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const Shell = imports.gi.Shell;
+const St = imports.gi.St;
+const Tweener = imports.ui.tweener;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -35,6 +37,7 @@ function updateAppMenu() {
 	
 	LOG('Override title ' + title);
 	Main.panel._appMenu._label.setText(title);
+	tooltip.text = title;
 	
 	return false;
 }
@@ -78,12 +81,71 @@ function onFocusChange() {
 }
 
 /*
+ * tooltip
+ */
+let tooltip = null;
+let tooltipVisible = false;
+
+function onHover(actor) {
+	let hover = actor.get_hover();
+	if(tooltipVisible === hover) {
+		return false;
+	}
+	
+	// We are not in the right state, let's fix that.
+	tooltipVisible = hover;
+	if (hover) {
+		Mainloop.idle_add(function() {
+			let label = Main.panel._appMenu._label._label;
+			
+			if(!label.get_clutter_text().get_layout().is_ellipsized()) {
+				return false;
+			}
+			
+			[bx, by] = label.get_transformed_position();
+			[w, h] = label.get_transformed_size();
+			
+			Main.uiGroup.add_actor(tooltip);
+			
+			let y = by + h + 5;
+			let x = bx - Math.round((tooltip.get_width() - w)/2);
+			tooltip.opacity = 0;
+			tooltip.set_position(x, y);
+			
+			Tweener.addTween(tooltip, {
+				opacity: 255,
+				time: 0.15,
+				transition: 'easeOutQuad',
+			});
+		});
+	} else {
+		Tweener.addTween(tooltip, {
+			opacity: 0,
+			time: 0.1,
+			transition: 'easeOutQuad',
+			onComplete: function() {
+				Main.uiGroup.remove_actor(tooltip);
+			}
+		});
+	}
+	
+	return false;
+}
+
+/*
  * Subextension hooks
  */
-function init() {}
+function init() {
+	tooltip = new St.Label({
+		style_class: 'tooltip dash-label',
+		text: ''
+	});
+	tooltip.opacity = 0;
+}
 
 let wmCallbackIDs = [];
 let focusCallbackID = 0;
+let tooltipCallbackID = 0;
 function enable() {
 	focusCallbackID = Shell.WindowTracker.get_default().connect('notify::focus-app', onFocusChange);
 	
@@ -94,9 +156,13 @@ function enable() {
     wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
 		Mainloop.idle_add(updateAppMenu);
 	}));
+	
+	tooltipCallbackID = Main.panel._appMenu.actor.connect('notify::hover', onHover);
 }
 
 function disable() {
+	Main.panel._appMenu.actor.disconnect(tooltipCallbackID);
+	
 	Shell.WindowTracker.get_default().disconnect(focusCallbackID);
 	focusCallbackID = 0;
 	
