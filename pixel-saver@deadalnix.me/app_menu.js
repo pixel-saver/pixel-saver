@@ -36,7 +36,7 @@ function updateAppMenu() {
 	}
 	
 	LOG('Override title ' + title);
-	Main.panel._appMenu._label.setText(title);
+	Main.panel.statusArea["appMenu"]._label.setText(title);
 	tooltip.text = title;
 	
 	return false;
@@ -108,7 +108,7 @@ function onHover(actor) {
 				WARN('showTooltip is false and delay callback ran.');
 			}
 			
-			let appMenu = Main.panel._appMenu;
+			let appMenu = Main.panel.statusArea["appMenu"];
 			let label = appMenu._label._label;
 			
 			if(!label.get_clutter_text().get_layout().is_ellipsized()) {
@@ -150,7 +150,7 @@ function onHover(actor) {
 			LOG('hide title tooltip');
 			
 			if(menuCallbackID) {
-				Main.panel._appMenu.menu.disconnect(menuCallbackID);
+				Main.panel.statusArea["appMenu"].menu.disconnect(menuCallbackID);
 				menuCallbackID = 0;
 			}
 			
@@ -197,11 +197,11 @@ function enable() {
 		Mainloop.idle_add(updateAppMenu);
 	}));
 	
-	tooltipCallbackID = Main.panel._appMenu.actor.connect('notify::hover', onHover);
+	tooltipCallbackID = Main.panel.statusArea["appMenu"].actor.connect('notify::hover', onHover);
 }
 
 function disable() {
-	Main.panel._appMenu.actor.disconnect(tooltipCallbackID);
+	Main.panel.statusArea["appMenu"].actor.disconnect(tooltipCallbackID);
 	
 	Shell.WindowTracker.get_default().disconnect(focusCallbackID);
 	focusCallbackID = 0;
@@ -224,10 +224,9 @@ function disable() {
 	}
 	
 	if(menuCallbackID) {
-		Main.panel._appMenu.menu.disconnect(menuCallbackID);
+		Main.panel.statusArea["appMenu"].menu.disconnect(menuCallbackID);
 		menuCallbackID = 0;
 	}
 	
 	Main.uiGroup.remove_actor(tooltip);
 }
-
