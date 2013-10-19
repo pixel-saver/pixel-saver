@@ -17,6 +17,8 @@ function WARN(message) {
 	log("[pixel-saver]: " + message);
 }
 
+let appMenu = null;
+
 /*
  * AppMenu synchronization
  */
@@ -36,7 +38,7 @@ function updateAppMenu() {
 	}
 	
 	LOG('Override title ' + title);
-	Main.panel._appMenu._label.setText(title);
+	appMenu._label.setText(title);
 	tooltip.text = title;
 	
 	return false;
@@ -108,7 +110,6 @@ function onHover(actor) {
 				WARN('showTooltip is false and delay callback ran.');
 			}
 			
-			let appMenu = Main.panel._appMenu;
 			let label = appMenu._label._label;
 			
 			if(!label.get_clutter_text().get_layout().is_ellipsized()) {
@@ -150,7 +151,7 @@ function onHover(actor) {
 			LOG('hide title tooltip');
 			
 			if(menuCallbackID) {
-				Main.panel._appMenu.menu.disconnect(menuCallbackID);
+				appMenu.menu.disconnect(menuCallbackID);
 				menuCallbackID = 0;
 			}
 			
@@ -187,21 +188,27 @@ let tooltipCallbackID = 0;
 function enable() {
 	tooltip.opacity = 0;
 	
+	if(Main.panel._appMenu) {
+		appMenu = Main.panel._appMenu;
+	} else {
+		appMenu = Main.panel.statusArea.appMenu;
+	}
+
 	focusCallbackID = Shell.WindowTracker.get_default().connect('notify::focus-app', onFocusChange);
 	
 	wmCallbackIDs.push(global.window_manager.connect('maximize', updateAppMenu));
 	wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateAppMenu));
 	
 	// note: 'destroy' needs a delay for .list_windows() report correctly
-    wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
+	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
 		Mainloop.idle_add(updateAppMenu);
 	}));
 	
-	tooltipCallbackID = Main.panel._appMenu.actor.connect('notify::hover', onHover);
+	tooltipCallbackID = appMenu.actor.connect('notify::hover', onHover);
 }
 
 function disable() {
-	Main.panel._appMenu.actor.disconnect(tooltipCallbackID);
+	appMenu.actor.disconnect(tooltipCallbackID);
 	
 	Shell.WindowTracker.get_default().disconnect(focusCallbackID);
 	focusCallbackID = 0;
@@ -224,7 +231,7 @@ function disable() {
 	}
 	
 	if(menuCallbackID) {
-		Main.panel._appMenu.menu.disconnect(menuCallbackID);
+		appMenu.menu.disconnect(menuCallbackID);
 		menuCallbackID = 0;
 	}
 	
