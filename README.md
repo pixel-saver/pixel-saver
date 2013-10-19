@@ -25,7 +25,7 @@ Simply follow the instructions and everything should be fine :
     git clone https://github.com/deadalnix/pixel-saver.git
     cd pixel-saver
     # Get the last released version
-	git checkout 1.1
+	git checkout 1.2
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me ~/.local/share/gnome-shell/extensions
     # activate
