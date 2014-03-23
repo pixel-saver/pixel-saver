@@ -190,6 +190,8 @@ function enable() {
 	
 	if(Main.panel.statusArea && Main.panel.statusArea["appMenu"]) {
 		appMenu = Main.panel.statusArea["appMenu"];
+    } else if(Main.panel._appMenu) {
+        appMenu = Main.panel._appMenu;
 	} else if(Main.panel.statusArea["appMenu"]) {
 		appMenu = Main.panel.statusArea["appMenu"];
 	} else {
