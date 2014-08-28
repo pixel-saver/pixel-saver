@@ -70,8 +70,10 @@ function changeActiveWindow(win) {
  * Focus change
  */
 function onFocusChange() {
-	if (!Shell.WindowTracker.get_default().focus_app &&
-		global.stage_input_mode == Shell.StageInputMode.FOCUSED) {
+	let input_mode_check = (global.stage_input_mode === undefined)
+		? true
+		: global.stage_input_mode == Shell.StageInputMode.FOCUSED;
+	if (!Shell.WindowTracker.get_default().focus_app && input_mode_check) {
 		// If the app has just lost focus to the panel, pretend
 		// nothing happened; otherwise you can't keynav to the
 		// app menu.
