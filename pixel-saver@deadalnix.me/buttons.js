@@ -20,7 +20,7 @@ function WARN(message) {
 /*
  * Buttons
  */
-const DCONF_META_PATH = 'org.gnome.shell.overrides';
+const DCONF_META_PATH = 'org.gnome.desktop.wm.preferences';
 
 let actors = [], boxes = [];
 function createButtons() {

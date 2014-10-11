@@ -97,7 +97,7 @@ let HIDE_DURATION = 0.1;
 let tooltipDelayCallbackID = 0;
 let menuCallbackID = 0;
 
-function onHover(actor) {
+function onAppMenuHover(actor) {
 	let hover = actor.get_hover();
 	if(showTooltip === hover) {
 		return false;
@@ -189,17 +189,8 @@ let focusCallbackID = 0;
 let tooltipCallbackID = 0;
 function enable() {
 	tooltip.opacity = 0;
+	appMenu = Main.panel.statusArea.appMenu;
 	
-	if(Main.panel.statusArea && Main.panel.statusArea["appMenu"]) {
-		appMenu = Main.panel.statusArea["appMenu"];
-	} else if(Main.panel._appMenu) {
-		appMenu = Main.panel._appMenu;
-	} else if(Main.panel.statusArea["appMenu"]) {
-		appMenu = Main.panel.statusArea["appMenu"];
-	} else {
-		appMenu = Main.panel.statusArea.appMenu;
-	}
-
 	focusCallbackID = Shell.WindowTracker.get_default().connect('notify::focus-app', onFocusChange);
 	
 	wmCallbackIDs.push(global.window_manager.connect('maximize', updateAppMenu));
@@ -210,7 +201,7 @@ function enable() {
 		Mainloop.idle_add(updateAppMenu);
 	}));
 	
-	tooltipCallbackID = appMenu.actor.connect('notify::hover', onHover);
+	tooltipCallbackID = appMenu.actor.connect('notify::hover', onAppMenuHover);
 }
 
 function disable() {
