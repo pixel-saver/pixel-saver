@@ -123,6 +123,12 @@ function setHideTitlebar(win, hide, stopAdding) {
 	}
 	LOG(cmd.join(' '));
 	Util.spawn(cmd);
+	
+	// Remaximize the window if it is already to force redraw.
+	const MAXIMIZED = Util.MAXIMIZED;
+	if (win.get_maximized() === MAXIMIZED) {
+		win.maximize(MAXIMIZED);
+	}
 }
 
 /**** Callbacks ****/
