@@ -30,47 +30,93 @@ function WARN(message) {
  * success if the window's actor (`win.get_compositor_private()`) exists.
  */
 function guessWindowXID(win) {
-	let id = null;
+	// We cache the result so we don't need to redetect.
+	if (win._pixelSaverWindowID) {
+		return win._pixelSaverWindowID;
+	}
+	
 	/* if window title has non-utf8 characters, get_description() complains
 	 * "Failed to convert UTF-8 string to JS string: Invalid byte sequence in conversion input",
 	 * event though get_title() works.
 	 */
 	try {
-		id = win.get_description().match(/0x[0-9a-f]+/);
-		if (id) {
-			id = id[0];
-			return id;
+		let m = win.get_description().match(/0x[0-9a-f]+/);
+		if (m && m[0]) {
+			return win._pixelSaverWindowID = m[0];
 		}
-	} catch (err) {
-	}
-
+	} catch (err) { }
+	
 	// use xwininfo, take first child.
 	let act = win.get_compositor_private();
 	if (act) {
-		id = GLib.spawn_command_line_sync('xwininfo -children -id 0x%x'.format(act['x-window']));
-		if (id[0]) {
-			let str = id[1].toString();
+		let xwininfo = GLib.spawn_command_line_sync('xwininfo -children -id 0x%x'.format(act['x-window']));
+		if (xwininfo[0]) {
+			let str = xwininfo[1].toString();
 
 			/* The X ID of the window is the one preceding the target window's title.
 			 * This is to handle cases where the window has no frame and so
 			 * act['x-window'] is actually the X ID we want, not the child.
 			 */
 			let regexp = new RegExp('(0x[0-9a-f]+) +"%s"'.format(win.title));
-			id = str.match(regexp);
-			if (id) {
-				return id[1];
+			let m = str.match(regexp);
+			if (m && m[1]) {
+				return win._pixelSaverWindowID = m[1];
 			}
 
 			/* Otherwise, just grab the child and hope for the best */
-			id = str.split(/child(?:ren)?:/)[1].match(/0x[0-9a-f]+/);
-			if (id) {
-				return id[0];
+			m = str.split(/child(?:ren)?:/)[1].match(/0x[0-9a-f]+/);
+			if (m && m[0]) {
+				return win._pixelSaverWindowID = id[0];
 			}
 		}
 	}
+	
 	// debugging for when people find bugs..
 	WARN("Could not find XID for window with title %s".format(win.title));
 	return null;
+}
+
+/**
+ * Get the value of _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED before
+ * pixel saver did its magic.
+ * 
+ * @param {Meta.Window} win - the window to check the property
+ */
+function getOriginalState(win) {
+	if (win._pixelSaverOriginalState !== undefined) {
+		return win._pixelSaverOriginalState;
+	}
+	
+	let id = guessWindowXID(win);
+	let cmd = 'xprop -id ' + id;
+	LOG(cmd);
+	
+	let xprops = GLib.spawn_command_line_sync(cmd);
+	if (!xprops[0]) {
+		WARN("xprop failed for " + win.title + " with id " + id);
+		return false;
+	}
+	
+	let str = xprops[1].toString();
+	let m = str.match(/^_PIXEL_SAVER_ORIGINAL_STATE\(CARDINAL\) = ([0-9]+)$/m);
+	if (m) {
+		return win._pixelSaverOriginalState = !!m[1];
+	}
+	
+	m = str.match(/^_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED(\(CARDINAL\))? = ([0-9]+)$/m);
+	if (m) {
+		let state = !!m[1];
+		cmd = ['xprop', '-id', id,
+		      '-f', '_PIXEL_SAVER_ORIGINAL_STATE', '32c',
+		      '-set', '_PIXEL_SAVER_ORIGINAL_STATE',
+		      (state ? '0x1' : '0x0')];
+		LOG(cmd.join(' '));
+		Util.spawn(cmd);
+		return win._pixelSaverOriginalState = state;
+	}
+	
+	WARN("Can't find original state for " + win.title + " with id " + id);
+	return false;
 }
 
 /**
@@ -87,40 +133,20 @@ function guessWindowXID(win) {
  *
  * @param {Meta.Window} win - window to set the HIDE_TITLEBAR_WHEN_MAXIMIZED property of.
  * @param {boolean} hide - whether to hide the titlebar or not.
- * @param {boolean} [stopAdding] - if `win` does not have an actor and we couldn't
- * find the window's XID, we try one more time to detect the XID, unless this
- * is `true`. Internal use.
  */
-function setHideTitlebar(win, hide, stopAdding) {
-	LOG('setHideTitlebar: ' + win.get_title() + ': ' + hide + (stopAdding ? ' (2)' : ''));
-
-	let id = guessWindowXID(win);
-	/* Newly-created windows are added to the workspace before
-	 * the compositor knows about them: get_compositor_private() is null.
-	 * Additionally things like .get_maximized() aren't properly done yet.
-	 * (see workspace.js _doAddWindow)
-	 */
-	if (!id && !win.get_compositor_private() && !stopAdding) {
-		Mainloop.idle_add(function () {
-			setHideTitlebar(win, hide, true); // only try once more.
-			return false; // define as one-time event
-		});
-		return;
-	}
-
+function setHideTitlebar(win, hide) {
+	LOG('setHideTitlebar: ' + win.get_title() + ': ' + hide);
+	
+	// Make sure we save the state before altering it.
+	getOriginalState(win);
+	
 	/* Undecorate with xprop. Use _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED.
 	 * See (eg) mutter/src/window-props.c
 	 */
-	let cmd = ['xprop', '-id', id,
-		   '-f', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED', '32c',
-		   '-set', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED',
-		   (hide ? '0x1' : '0x0')];
-
-	// fallback: if couldn't get id for some reason, use the window's name
-	if (!id) {
-		cmd[1] = '-name';
-		cmd[2] = win.get_title();
-	}
+	let cmd = ['xprop', '-id', guessWindowXID(win),
+	           '-f', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED', '32c',
+	           '-set', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED',
+	           (hide ? '0x1' : '0x0')];
 	LOG(cmd.join(' '));
 	Util.spawn(cmd);
 	
@@ -144,6 +170,10 @@ function setHideTitlebar(win, hide, stopAdding) {
  * @see undecorate
  */
 function onWindowAdded(ws, win) {
+	if (win.window_type === Meta.WindowType.DESKTOP) {
+		return false;
+	}
+	
 	// if the window is simply switching workspaces, it will trigger a
 	// window-added signal. We don't want to reprocess it then because we already
 	// have.
@@ -156,13 +186,29 @@ function onWindowAdded(ws, win) {
 	 * Additionally things like .get_maximized() aren't properly done yet.
 	 * (see workspace.js _doAddWindow)
 	 */
-	// FIXME: get hide-titlebar-when-maximized value
-	win._pixelSaverOriginalState = false;
-	LOG('onWindowAdded: ' + win.get_title() + ' initially hide title ? ' + win._pixelSaverOriginalState);
-	
-	if(win._pixelSaverOriginalState === false) {
-		setHideTitlebar(win, true);
+	if (!win.get_compositor_private()) {
+		Mainloop.idle_add(function () {
+			onWindowAdded(ws, win);
+			return false;
+		});
+		return false;
 	}
+	
+	let retry = 3;
+	Mainloop.idle_add(function () {
+		let id = guessWindowXID(win);
+		if (!id) {
+			if (--retry) {
+				return true;
+			}
+			
+			WARN("Finding XID for window %s failed".format(win.title));
+			return false;
+		}
+		
+		LOG('onWindowAdded: ' + win.get_title());
+		setHideTitlebar(win, true);
+	});
 	
 	return false;
 }
@@ -254,11 +300,12 @@ function disable() {
 		if (win.window_type === Meta.WindowType.DESKTOP) {
 			continue;
 		}
-		LOG('stopUndecorating: ' + win.title);
 		
-		if (win._pixelSaverOriginalState === false) {
+		LOG('stopUndecorating: ' + win.title);
+		if (getOriginalState(win) === false) {
 			setHideTitlebar(win, false);
 		}
+		
 		delete win._pixelSaverOriginalState;
 	}
 }

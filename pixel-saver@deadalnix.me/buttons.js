@@ -102,8 +102,6 @@ function destroyButtons() {
 /*
  * Buttons actions
  */
-const MAXIMIZED = Util.MAXIMIZED;
-
 function minimize() {
 	let win = Util.getWindow();
 	if (!win || win.minimized) {
@@ -121,6 +119,7 @@ function maximize() {
 		return;
 	}
 	
+	const MAXIMIZED = Util.MAXIMIZED;
 	if (win.get_maximized() === MAXIMIZED) {
 		win.unmaximize(MAXIMIZED);
 	} else {
