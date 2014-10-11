@@ -186,7 +186,14 @@ function unloadTheme() {
  */
 function updateVisibility() {
 	// If we have a window to control, then we show the buttons.
-	let visible = !Main.overview.visible && !!Util.getWindow();
+	let visible = !Main.overview.visible;
+	if (visible) {
+		visible = false;
+		let win = Util.getWindow();
+		if (win) {
+			visible = win.decorated;
+		}
+	}
 	
 	for (let i = 0; i < actors.length; ++i) {
 		let actor = actors[i];
