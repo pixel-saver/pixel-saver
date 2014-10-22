@@ -148,13 +148,26 @@ function setHideTitlebar(win, hide) {
 	           '-set', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED',
 	           (hide ? '0x1' : '0x0')];
 	LOG(cmd.join(' '));
-	Util.spawn(cmd);
-	
-	// Remaximize the window if it is already to force redraw.
-	const MAXIMIZED = Util.MAXIMIZED;
-	if (win.get_maximized() === MAXIMIZED) {
-		win.maximize(MAXIMIZED);
-	}
+
+	// Run xprop
+	[success, pid] = GLib.spawn_async(null, cmd, null,
+					  GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+					  null);
+
+	// After xprop completes, unmaximize and remaximize any window
+	// that is already maximized. It seems that setting the xprop on
+	// a window that is already maximized doesn't actually take
+	// effect immediately but it needs a focuse change or other
+	// action to force a relayout. Doing unmaximize and maximize
+	// here seems to be an uninvasive way to handle this. This needs
+	// to happen _after_ xprop completes.
+	GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, function () {
+		let flags = win.get_maximized();
+		if (flags == Meta.MaximizeFlags.BOTH) {
+			win.unmaximize(flags);
+			win.maximize(flags);
+		}
+        });
 }
 
 /**** Callbacks ****/
