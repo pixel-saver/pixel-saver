@@ -119,7 +119,7 @@ function maximize() {
 		return;
 	}
 	
-	const MAXIMIZED = Util.MAXIMIZED;
+	const MAXIMIZED = Meta.MaximizeFlags.BOTH;
 	if (win.get_maximized() === MAXIMIZED) {
 		win.unmaximize(MAXIMIZED);
 	} else {
