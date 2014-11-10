@@ -162,10 +162,11 @@ function setHideTitlebar(win, hide) {
 	// here seems to be an uninvasive way to handle this. This needs
 	// to happen _after_ xprop completes.
 	GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, function () {
+		const MAXIMIZED = Meta.MaximizeFlags.BOTH;
 		let flags = win.get_maximized();
-		if (flags == Meta.MaximizeFlags.BOTH) {
-			win.unmaximize(flags);
-			win.maximize(flags);
+		if (flags == MAXIMIZED) {
+			win.unmaximize(MAXIMIZED);
+			win.maximize(MAXIMIZED);
 		}
         });
 }

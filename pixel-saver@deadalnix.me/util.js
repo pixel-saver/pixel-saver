@@ -1,6 +1,6 @@
 const Meta = imports.gi.Meta;
 
-const MAXIMIZED = (Meta.MaximizeFlags.HORIZONTAL | Meta.MaximizeFlags.VERTICAL);
+const MAXIMIZED = Meta.MaximizeFlags.BOTH;
 
 function getWindow() {
 	// get all window in stacking order.
