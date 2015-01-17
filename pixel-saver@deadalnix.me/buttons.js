@@ -104,7 +104,7 @@ function destroyButtons() {
  */
 function leftclick(callback) {
 	return function(actor, event) {
-		if (event.get_button() != 1) {
+		if (event.get_button() !== 1) {
 			return;
 		}
 		

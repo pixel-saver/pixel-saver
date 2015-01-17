@@ -25,14 +25,14 @@ let appMenu = null;
 function updateAppMenu() {
 	let win = global.display.focus_window;
 	
-	if(!win) {
+	if (!win) {
 		return false;
 	}
 	
 	let title = win.title;
 	
 	// Not the topmost maximized window.
-	if(win !== Util.getWindow()) {
+	if (win !== Util.getWindow()) {
 		let app = Shell.WindowTracker.get_default().get_window_app(win);
 		title = app.get_name();
 	}
@@ -50,17 +50,17 @@ function updateAppMenu() {
 let activeWindow = null;
 let awCallbackID = 0;
 function changeActiveWindow(win) {
-	if(win === activeWindow) {
+	if (win === activeWindow) {
 		return;
 	}
 	
-	if(activeWindow) {
+	if (activeWindow) {
 		activeWindow.disconnect(awCallbackID);
 	}
 	
 	activeWindow = win;
 	
-	if(win) {
+	if (win) {
 		awCallbackID = win.connect('notify::title', updateAppMenu);
 		updateAppMenu();
 	}
@@ -99,7 +99,7 @@ let menuCallbackID = 0;
 
 function onAppMenuHover(actor) {
 	let hover = actor.get_hover();
-	if(showTooltip === hover) {
+	if (showTooltip === hover) {
 		return false;
 	}
 	
@@ -122,7 +122,7 @@ function onAppMenuHover(actor) {
 			
 			Main.uiGroup.add_actor(tooltip);
 			menuCallbackID = appMenu.menu.connect('open-state-changed', function(menu, open) {
-				if(open) {
+				if (open) {
 					Main.uiGroup.remove_actor(tooltip);
 				} else {
 					Main.uiGroup.add_actor(tooltip);
@@ -147,7 +147,7 @@ function onAppMenuHover(actor) {
 			
 			return false;
 		});
-	} else if(tooltipDelayCallbackID > 0) {
+	} else if (tooltipDelayCallbackID > 0) {
 		if(!Mainloop.source_remove(tooltipDelayCallbackID)) {
 			// If the event ran, then we hide.
 			LOG('hide title tooltip');
@@ -180,7 +180,7 @@ function onAppMenuHover(actor) {
 function init() {
 	tooltip = new St.Label({
 		style_class: 'tooltip dash-label',
-		text: ''
+		text: '',
 	});
 }
 

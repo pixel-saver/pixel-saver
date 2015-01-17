@@ -148,12 +148,15 @@ function setHideTitlebar(win, hide) {
 	           '-set', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED',
 	           (hide ? '0x1' : '0x0')];
 	LOG(cmd.join(' '));
-
+	
 	// Run xprop
-	[success, pid] = GLib.spawn_async(null, cmd, null,
-					  GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-					  null);
-
+	[success, pid] = GLib.spawn_async(
+		null,
+		cmd,
+		null,
+		GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+		null);
+	
 	// After xprop completes, unmaximize and remaximize any window
 	// that is already maximized. It seems that setting the xprop on
 	// a window that is already maximized doesn't actually take
@@ -168,7 +171,7 @@ function setHideTitlebar(win, hide) {
 			win.unmaximize(MAXIMIZED);
 			win.maximize(MAXIMIZED);
 		}
-        });
+	});
 }
 
 /**** Callbacks ****/
