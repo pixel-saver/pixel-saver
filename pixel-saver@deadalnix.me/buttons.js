@@ -58,7 +58,7 @@ function createButtons() {
 			}
 			
 			if (!callbacks[order[i]]) {
-				// skip if the butto name is not right...
+				// skip if the button's name is not right...
 				WARN("\'%s\' is not a valid button.".format(order[i]));
 				continue;
 			}
@@ -68,7 +68,7 @@ function createButtons() {
 				track_hover: true
 			});
 			
-			button.connect('button-press-event', callbacks[order[i]]);
+			button.connect('button-release-event', leftclick(callbacks[order[i]]));
 			box.add(button);
 		}
 	}
@@ -102,6 +102,16 @@ function destroyButtons() {
 /*
  * Buttons actions
  */
+function leftclick(callback) {
+	return function(actor, event) {
+		if (event.get_button() != 1) {
+			return;
+		}
+		
+		return callback(actor, event);
+	}
+}
+
 function minimize() {
 	let win = Util.getWindow();
 	if (!win || win.minimized) {
