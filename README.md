@@ -25,7 +25,7 @@ Simply follow the instructions and everything should be fine :
     git clone https://github.com/deadalnix/pixel-saver.git
     cd pixel-saver
     # Get the last released version
-	git checkout 1.2
+	git checkout 1.4
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me ~/.local/share/gnome-shell/extensions
     # activate
@@ -35,6 +35,11 @@ Configuration
 -------------
 
 Don't be silly !
+
+Support for older versions of gnome shell
+-----------
+
+Version 1.3 will be the last version to support gnome shell prior to 3.12 .
 
 Screenshots
 -----------
