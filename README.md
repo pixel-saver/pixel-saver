@@ -27,7 +27,7 @@ Simply follow the instructions and everything should be fine :
     # Get the last released version
 	git checkout 1.4
     # copy to extensions directory
-    cp -r pixel-saver@deadalnix.me ~/.local/share/gnome-shell/extensions
+    cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
     # activate
     gnome-shell-extension-tool -e pixel-saver@deadalnix.me
 
