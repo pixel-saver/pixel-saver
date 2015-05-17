@@ -66,7 +66,7 @@ function guessWindowXID(win) {
 			/* Otherwise, just grab the child and hope for the best */
 			m = str.split(/child(?:ren)?:/)[1].match(/0x[0-9a-f]+/);
 			if (m && m[0]) {
-				return win._pixelSaverWindowID = id[0];
+				return win._pixelSaverWindowID = m[0];
 			}
 		}
 	}
