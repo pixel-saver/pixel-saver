@@ -24,7 +24,6 @@ let appMenu = null;
  */
 function updateAppMenu() {
 	let win = global.display.focus_window;
-	
 	if (!win) {
 		return false;
 	}

@@ -1,5 +1,6 @@
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const Gtk = imports.gi.Gtk;
 const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
@@ -155,7 +156,7 @@ function close() {
  */
 let activeCSS = false;
 function loadTheme() {
-	let theme = Meta.prefs_get_theme(),
+	let theme = Gtk.Settings.get_default().gtk_theme_name,
 		cssPath = GLib.build_filenamev([extensionPath, 'themes', theme, 'style.css']);
 	
 	LOG('Load theme ' + theme);
