@@ -225,6 +225,7 @@ function onWindowAdded(ws, win) {
 		
 		LOG('onWindowAdded: ' + win.get_title());
 		setHideTitlebar(win, true);
+		return false;
 	});
 	
 	return false;

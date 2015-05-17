@@ -54,12 +54,12 @@ function createButtons() {
 			box = boxes[bi];
 		
 		for (let i = 0; i < order.length; ++i) {
-			if(!order[i]) {
+			if (!order[i]) {
 				continue;
 			}
 			
 			if (!callbacks[order[i]]) {
-				// skip if the button's name is not right...
+				// Skip if the button's name is not right...
 				WARN("\'%s\' is not a valid button.".format(order[i]));
 				continue;
 			}
@@ -76,16 +76,15 @@ function createButtons() {
 	
 	Mainloop.idle_add(function () {
 		// 1 for activity button and -1 for the menu
-		if(boxes[0].get_children().length) {
+		if (boxes[0].get_children().length) {
 			Main.panel._leftBox.insert_child_at_index(actors[0], 1);
 		}
 		
-		if(boxes[1].get_children().length) {
+		if (boxes[1].get_children().length) {
 			Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
 		}
 		
 		updateVisibility();
-		
 		return false;
 	});
 }
@@ -160,7 +159,6 @@ function loadTheme() {
 		cssPath = GLib.build_filenamev([extensionPath, 'themes', theme, 'style.css']);
 	
 	LOG('Load theme ' + theme);
-	
 	if (!GLib.file_test(cssPath, GLib.FileTest.EXISTS)) {
 		cssPath = GLib.build_filenamev([extensionPath, 'themes/default/style.css']);
 	}
@@ -171,7 +169,7 @@ function loadTheme() {
 	
 	unloadTheme();
 	
-	// load the new style
+	// Load the new style
 	St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssPath);
 	
 	// Force style update.
