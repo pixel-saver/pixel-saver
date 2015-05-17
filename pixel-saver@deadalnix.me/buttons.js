@@ -164,7 +164,7 @@ function loadTheme() {
 		cssPath = GLib.build_filenamev([extensionPath, 'themes/default/style.css']);
 	}
 	
-	if(cssPath === activeCSS) {
+	if (cssPath === activeCSS) {
 		return;
 	}
 	
@@ -182,7 +182,7 @@ function loadTheme() {
 }
 
 function unloadTheme() {
-	if(activeCSS) {
+	if (activeCSS) {
 		LOG('Unload ' + activeCSS);
 		
 		St.ThemeContext.get_for_stage(global.stage).get_theme().unload_stylesheet(activeCSS);
