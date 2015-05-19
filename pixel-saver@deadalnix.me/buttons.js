@@ -170,7 +170,8 @@ function loadTheme() {
 	unloadTheme();
 	
 	// Load the new style
-	St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssPath);
+	let cssFile = Gio.file_new_for_path(cssPath);
+	St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssFile);
 	
 	// Force style update.
 	for (let i = 0; i < actors.length; ++i) {
@@ -184,7 +185,8 @@ function unloadTheme() {
 	if (activeCSS) {
 		LOG('Unload ' + activeCSS);
 		
-		St.ThemeContext.get_for_stage(global.stage).get_theme().unload_stylesheet(activeCSS);
+		let cssFile = Gio.file_new_for_path(activeCSS);
+		St.ThemeContext.get_for_stage(global.stage).get_theme().unload_stylesheet(cssFile);
 		activeCSS = false;
 	}
 }
