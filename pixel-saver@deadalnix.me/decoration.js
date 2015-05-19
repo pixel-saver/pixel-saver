@@ -48,7 +48,7 @@ function guessWindowXID(win) {
 	
 	// use xwininfo, take first child.
 	let act = win.get_compositor_private();
-	if (act) {
+	if (act && act['x-window']) {
 		let xwininfo = GLib.spawn_command_line_sync('xwininfo -children -id 0x%x'.format(act['x-window']));
 		if (xwininfo[0]) {
 			let str = xwininfo[1].toString();
@@ -66,7 +66,7 @@ function guessWindowXID(win) {
 			/* Otherwise, just grab the child and hope for the best */
 			m = str.split(/child(?:ren)?:/)[1].match(/0x[0-9a-f]+/);
 			if (m && m[0]) {
-				return win._pixelSaverWindowID = id[0];
+				return win._pixelSaverWindowID = m[0];
 			}
 		}
 	}
