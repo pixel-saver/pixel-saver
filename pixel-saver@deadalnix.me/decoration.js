@@ -187,7 +187,9 @@ function setHideTitlebar(win, hide) {
  *
  * @see undecorate
  */
-function onWindowAdded(ws, win) {
+function onWindowAdded(ws, win, compositor_retries) {
+	compositor_retries = typeof compositor_retries !== 'undefined'? compositor_retries : 3;
+
 	if (win.window_type === Meta.WindowType.DESKTOP) {
 		return false;
 	}
@@ -205,10 +207,14 @@ function onWindowAdded(ws, win) {
 	 * (see workspace.js _doAddWindow)
 	 */
 	if (!win.get_compositor_private()) {
-		Mainloop.idle_add(function () {
-			onWindowAdded(ws, win);
+		if (--compositor_retries) {
+			Mainloop.idle_add(function () {
+				onWindowAdded(ws, win, compositor_retries);
+				return false;
+			});
 			return false;
-		});
+		}
+		WARN("Failed to get compositor for window %s".format(win.title));
 		return false;
 	}
 	
