@@ -187,26 +187,32 @@ function setHideTitlebar(win, hide) {
  *
  * @see undecorate
  */
-function onWindowAdded(ws, win) {
+function onWindowAdded(ws, win, retry) {
 	if (win.window_type === Meta.WindowType.DESKTOP) {
 		return false;
 	}
 	
-	// if the window is simply switching workspaces, it will trigger a
+	// If the window is simply switching workspaces, it will trigger a
 	// window-added signal. We don't want to reprocess it then because we already
 	// have.
 	if (win._pixelSaverOriginalState !== undefined) {
 		return false;
 	}
 	
-	/* Newly-created windows are added to the workspace before
+	/**
+	 * Newly-created windows are added to the workspace before
 	 * the compositor knows about them: get_compositor_private() is null.
 	 * Additionally things like .get_maximized() aren't properly done yet.
 	 * (see workspace.js _doAddWindow)
 	 */
 	if (!win.get_compositor_private()) {
+		retry = (retry === undefined) ? retry : 0;
+		if (retry > 3) {
+			return false;
+		}
+		
 		Mainloop.idle_add(function () {
-			onWindowAdded(ws, win);
+			onWindowAdded(ws, win, retry + 1);
 			return false;
 		});
 		return false;
