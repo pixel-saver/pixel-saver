@@ -23,6 +23,7 @@ let appMenu = null;
  * AppMenu synchronization
  */
 function updateAppMenu() {
+	
 	let win = global.display.focus_window;
 	if (!win) {
 		return false;
@@ -37,7 +38,8 @@ function updateAppMenu() {
 	}
 	
 	LOG('Override title ' + title);
-	appMenu._label.set_text(title);
+	//The following line change the label on topbar with the title of the maximized window
+	appMenu._label.text = title; 
 	tooltip.text = title;
 	
 	return false;
@@ -58,11 +60,12 @@ function changeActiveWindow(win) {
 	}
 	
 	activeWindow = win;
-	
+	/*
 	if (win) {
 		awCallbackID = win.connect('notify::title', updateAppMenu);
 		updateAppMenu();
 	}
+	*/
 }
 
 /*
@@ -192,13 +195,13 @@ function enable() {
 	
 	focusCallbackID = Shell.WindowTracker.get_default().connect('notify::focus-app', onFocusChange);
 	
-	wmCallbackIDs.push(global.window_manager.connect('maximize', updateAppMenu));
-	wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateAppMenu));
+	//wmCallbackIDs.push(global.window_manager.connect('maximize', updateAppMenu));
+	//wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateAppMenu));
 	
 	// note: 'destroy' needs a delay for .list_windows() report correctly
-	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
+	/*wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
 		Mainloop.idle_add(updateAppMenu);
-	}));
+	}));*/
 	
 	tooltipCallbackID = appMenu.actor.connect('notify::hover', onAppMenuHover);
 }
