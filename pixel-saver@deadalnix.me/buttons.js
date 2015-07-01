@@ -241,6 +241,7 @@ function enable() {
 	wmCallbackIDs.push(global.window_manager.connect('switch-workspace', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('map', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('minimize', updateVisibility));
+	wmCallbackIDs.push(global.window_manager.connect('unminimize', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('maximize', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateVisibility));
 	
