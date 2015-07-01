@@ -37,7 +37,7 @@ function updateAppMenu() {
 	}
 	
 	LOG('Override title ' + title);
-	appMenu._label.text = title;
+	appMenu._label.set_text(title);
 	tooltip.text = title;
 	
 	return false;
