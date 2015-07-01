@@ -237,6 +237,7 @@ function enable() {
 	
 	overviewCallbackIDs.push(Main.overview.connect('showing', updateVisibility));
 	overviewCallbackIDs.push(Main.overview.connect('hidden', updateVisibility));
+	
 	wmCallbackIDs.push(global.window_manager.connect('switch-workspace', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('map', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('minimize', updateVisibility));
