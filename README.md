@@ -31,6 +31,10 @@ Simply follow the instructions and everything should be fine :
     # activate
     gnome-shell-extension-tool -e pixel-saver@deadalnix.me
 
+### Dependencies
+
+Pixel Saver depends on Xorg's xprop utility.
+
 Configuration
 -------------
 
