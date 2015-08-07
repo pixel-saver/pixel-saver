@@ -206,7 +206,7 @@ function onWindowAdded(ws, win, retry) {
 	 * (see workspace.js _doAddWindow)
 	 */
 	if (!win.get_compositor_private()) {
-		retry = (retry === undefined) ? retry : 0;
+		retry = (retry !== undefined) ? retry : 0;
 		if (retry > 3) {
 			return false;
 		}
