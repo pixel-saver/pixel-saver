@@ -1,6 +1,7 @@
 const Meta = imports.gi.Meta;
 
-const MAXIMIZED = Meta.MaximizeFlags.BOTH;
+const VERT = Meta.MaximizeFlags.VERTICAL;
+const BOTH = Meta.MaximizeFlags.BOTH;
 
 function getWindow() {
 	// get all window in stacking order.
@@ -9,15 +10,16 @@ function getWindow() {
 			return w.get_window_type() !== Meta.WindowType.DESKTOP;
 		})
 	);
-	
+
 	let i = windows.length;
-    while (i--) {
-    	let window = windows[i];
-    	if (window.get_maximized() === MAXIMIZED && !window.minimized) {
+		while (i--) {
+			let window = windows[i];
+			let maximized = window.get_maximized()
+			if ((maximized === VERT || maximized === BOTH) && !window.minimized) {
 			return window;
 		}
 	}
-	
+
 	return null;
 }
 
