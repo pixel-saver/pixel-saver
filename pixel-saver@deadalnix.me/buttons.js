@@ -242,8 +242,7 @@ function enable() {
 	wmCallbackIDs.push(global.window_manager.connect('map', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('minimize', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('unminimize', updateVisibility));
-	wmCallbackIDs.push(global.window_manager.connect('maximize', updateVisibility));
-	wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateVisibility));
+	wmCallbackIDs.push(global.window_manager.connect('size-change', updateVisibility));
 	
 	// note: 'destroy' needs a delay for .list_windows() report correctly
     wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
