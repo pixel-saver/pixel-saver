@@ -246,7 +246,7 @@ function enable() {
 		// Gnome 3.16
 		wmCallbackIDs.push(global.window_manager.connect('maximize', updateVisibility));
 		wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateVisibility));
-	} catch () {
+	} catch (e) {
 		// Gnome 3.18
 		wmCallbackIDs.push(global.window_manager.connect('size-change', updateVisibility));
 	}
