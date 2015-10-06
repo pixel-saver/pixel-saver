@@ -111,7 +111,7 @@ function onAppMenuHover(actor) {
 				WARN('showTooltip is false and delay callback ran.');
 			}
 			
-			let label = appMenu._label._label;
+			let label = appMenu._label;
 			
 			if(!label.get_clutter_text().get_layout().is_ellipsized()) {
 				// Do not need to hide.
