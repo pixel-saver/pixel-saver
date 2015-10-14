@@ -192,8 +192,14 @@ function enable() {
 	
 	focusCallbackID = Shell.WindowTracker.get_default().connect('notify::focus-app', onFocusChange);
 	
-	wmCallbackIDs.push(global.window_manager.connect('maximize', updateAppMenu));
-	wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateAppMenu));
+	try {
+		// Gnome 3.16
+		wmCallbackIDs.push(global.window_manager.connect('maximize', updateAppMenu));
+		wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateAppMenu));
+	} catch (e) {
+		// Gnome 3.18
+		wmCallbackIDs.push(global.window_manager.connect('size-change', updateAppMenu));
+	}
 	
 	// note: 'destroy' needs a delay for .list_windows() report correctly
 	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
