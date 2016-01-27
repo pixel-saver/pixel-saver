@@ -87,22 +87,20 @@ function guessWindowXID(win) {
 		for (var i = 0; i < windowList.length; ++i) {
 			let cmd = 'xprop -id "' + windowList[i] + '" _NET_WM_NAME _PIXEL_SAVER_ORIGINAL_STATE';
 			let result = GLib.spawn_command_line_sync(cmd);
-			LOG(cmd)
+			LOG(cmd);
 
 			if (result[0]) {
 				let output = result[1].toString();
 				let isManaged = output.indexOf("_PIXEL_SAVER_ORIGINAL_STATE(CARDINAL)") > -1;
-
 				if (isManaged) {
 					continue;
 				}
 
-				let title = output.substring(output.indexOf('"') + 1, output.length - 2);
-
-				LOG("Title of XID %s is \"%s\".".format(windowList[i], title));
+				let title = output.match(/_NET_WM_NAME(\(\w+\))? = "(([^\\"]|\\"|\\\\)*)"/);
+				LOG("Title of XID %s is \"%s\".".format(windowList[i], title[2]));
 
 				// Is this our guy?
-				if (title == win.title) {
+				if (title && title[2] == win.title) {
 					return windowList[i];
 				}
 			}
