@@ -71,7 +71,38 @@ function guessWindowXID(win) {
 			}
 		}
 	}
-	
+
+	// Try enumerating all available windows and match the title. Note that this
+	// may be necessary if the title contains special characters and `x-window`
+	// is not available.
+	let result = GLib.spawn_command_line_sync('xprop -root _NET_CLIENT_LIST');
+	LOG('xprop -root _NET_CLIENT_LIST')
+	if (result[0]) {
+		let str = result[1].toString();
+
+		// Get the list of window IDs.
+		let windowList = str.match(/0x[0-9a-f]+/g);
+
+		// For each window ID, check if the title matches the desired title.
+		for (var i = 0; i < windowList.length; ++i) {
+			let cmd = 'xprop -id "' + windowList[i] + '" _NET_WM_NAME';
+			let result = GLib.spawn_command_line_sync(cmd);
+			LOG(cmd)
+
+			if (result[0]) {
+				let output = result[1].toString();
+				let title = output.substring(output.indexOf('"') + 1, output.length - 2);
+
+				LOG("Title of XID %s is \"%s\".".format(windowList[i], title));
+
+				// Is this our guy?
+				if (title == win.title) {
+					return windowList[i];
+				}
+			}
+		}
+	}
+
 	// debugging for when people find bugs..
 	WARN("Could not find XID for window with title %s".format(win.title));
 	return null;
