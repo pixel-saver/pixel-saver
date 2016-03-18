@@ -8,7 +8,10 @@ const St = imports.gi.St;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
+
+const SETTINGS_BUTTONS_LEFT = 'buttons-placement-left';
 
 function LOG(message) {
 	// log("[pixel-saver]: " + message);
@@ -81,7 +84,11 @@ function createButtons() {
 		}
 		
 		if (boxes[1].get_children().length) {
-			Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
+			if (settings.get_boolean(SETTINGS_BUTTONS_LEFT)) {
+			    Main.panel._leftBox.insert_child_at_index(actors[1], Main.panel._leftBox.get_children().length);
+                        } else {
+                            Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
+                        }
 		}
 		
 		updateVisibility();
@@ -225,12 +232,15 @@ function updateVisibility() {
  * Subextension hooks
  */
 let extensionPath;
+let settings;
 function init(extensionMeta) {
 	extensionPath = extensionMeta.path;
+	settings = Convenience.getSettings();
 }
 
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
+let _sigButtonLeft;
 function enable() {
 	createButtons();
 	loadTheme();
@@ -252,9 +262,10 @@ function enable() {
 	}
 	
 	// note: 'destroy' needs a delay for .list_windows() report correctly
-    wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
+	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
 		Mainloop.idle_add(updateVisibility);
 	}));
+	_sigButtonLeft = settings.connect('changed::'+SETTINGS_BUTTONS_LEFT, createButtons);
 }
 
 function disable() {
@@ -271,5 +282,6 @@ function disable() {
 	
 	unloadTheme();
 	destroyButtons();
+	_sigButtonLeft.destroy();
 }
 

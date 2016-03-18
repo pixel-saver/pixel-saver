@@ -1,0 +1,19 @@
+<schemalist>
+	<schema id="org.gnome.shell.extensions.pixel-saver" path="/org/gnome/shell/extensions/pixel-saver/">
+		<key name="buttons-placement-left" type="b">
+			<default>false</default>
+			<summary>Window buttons on the left</summary>
+			<description>Moves window buttons to the left of the clock</description>
+		</key>
+		<key name="truncate-title" type="b">
+			<default>false</default>
+			<summary>Truncate title on window button</summary>
+			<description>Truncate title on window button</description>
+		</key>
+		<key name="title-length" type="i">
+			<default>40</default>
+			<summary>Max title length</summary>
+			<description>Maximum length of title apearing on window button.</description>
+		</key>
+	</schema>
+</schemalist>

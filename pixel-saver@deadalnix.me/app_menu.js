@@ -7,7 +7,11 @@ const Tweener = imports.ui.tweener;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
+
+const TRUNCATE_TITLE = 'truncate-title';
+const TITLE_LENGTH = 'title-length';
 
 function LOG(message) {
 	// log("[pixel-saver]: " + message);
@@ -30,10 +34,24 @@ function updateAppMenu() {
 	
 	let title = win.title;
 	
+	let app = Shell.WindowTracker.get_default().get_window_app(win);
+	let appName = app.get_name();
+
 	// Not the topmost maximized window.
 	if (win !== Util.getWindow()) {
-		let app = Shell.WindowTracker.get_default().get_window_app(win);
-		title = app.get_name();
+		title = appName;
+	} else if (settings.get_boolean(TRUNCATE_TITLE)) {
+		let maxLength = settings.get_int(TITLE_LENGTH);
+		let titleEnd = title.lastIndexOf(" - ");
+		if (maxLength > 0 && titleEnd > 0) {
+			if (titleEnd > maxLength) {
+				title = title.trim().substring(0, maxLength) + "... - " + appName;
+			} else {
+				title = title.trim().substring(0, titleEnd) + " - " + appName;
+			}
+		} else {
+			title = appName;
+		}
 	}
 	
 	LOG('Override title ' + title);
@@ -176,16 +194,20 @@ function onAppMenuHover(actor) {
 /*
  * Subextension hooks
  */
+let settings;
 function init() {
 	tooltip = new St.Label({
 		style_class: 'tooltip dash-label',
 		text: '',
 	});
+	settings = Convenience.getSettings();
 }
 
 let wmCallbackIDs = [];
 let focusCallbackID = 0;
 let tooltipCallbackID = 0;
+let _sigTruncate;
+let _sigTitleLength;
 function enable() {
 	tooltip.opacity = 0;
 	appMenu = Main.panel.statusArea.appMenu;
@@ -207,6 +229,9 @@ function enable() {
 	}));
 	
 	tooltipCallbackID = appMenu.actor.connect('notify::hover', onAppMenuHover);
+	_sigTruncate = settings.connect('changed::'+TRUNCATE_TITLE, updateAppMenu);
+	_sigTitleLength = settings.connect('changed::'+TITLE_LENGTH, updateAppMenu);
+	
 }
 
 function disable() {
@@ -238,5 +263,7 @@ function disable() {
 	}
 	
 	Main.uiGroup.remove_actor(tooltip);
+	_sigTruncate.destroy();
+	_sigTitleLength.destroy();
 }
 
