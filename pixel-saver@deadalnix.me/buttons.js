@@ -8,10 +8,10 @@ const St = imports.gi.St;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
 
-const SETTINGS_BUTTONS_LEFT = 'buttons-placement-left';
+let buttonsPosition = "right";
+
 
 function LOG(message) {
 	// log("[pixel-saver]: " + message);
@@ -30,67 +30,69 @@ let actors = [], boxes = [];
 function createButtons() {
 	// Ensure we do not create buttons twice.
 	destroyButtons();
-	
+
 	actors = [new St.Bin({ style_class: 'box-bin'}), new St.Bin({ style_class: 'box-bin'})];
 	boxes = [new St.BoxLayout({ style_class: 'button-box' }), new St.BoxLayout({ style_class: 'button-box' })];
-	
+
 	for (let i = 0; i < actors.length; ++i) {
 		actors[i].add_actor(boxes[i]);
 	}
-	
+
 	let order = new Gio.Settings({schema_id: DCONF_META_PATH}).get_string('button-layout');
 	LOG('Buttons layout : ' + order);
-	
+
 	let orders = order.replace(/ /g, '').split(':');
-	
+
 	orders[0] = orders[0].split(',');
 	orders[1] = orders[1].split(',');
-	
+
 	const callbacks = {
 		minimize : minimize,
 		maximize : maximize,
 		close    : close
 	};
-	
+
 	for (let bi = 0; bi < boxes.length; ++bi) {
 		let order = orders[bi],
 			box = boxes[bi];
-		
+
 		for (let i = 0; i < order.length; ++i) {
 			if (!order[i]) {
 				continue;
 			}
-			
+
 			if (!callbacks[order[i]]) {
 				// Skip if the button's name is not right...
 				WARN("\'%s\' is not a valid button.".format(order[i]));
 				continue;
 			}
-			
+
 			let button = new St.Button({
 				style_class: order[i]  + ' window-button',
 				track_hover: true
 			});
-			
+
 			button.connect('button-release-event', leftclick(callbacks[order[i]]));
 			box.add(button);
 		}
 	}
-	
+
 	Mainloop.idle_add(function () {
 		// 1 for activity button and -1 for the menu
 		if (boxes[0].get_children().length) {
 			Main.panel._leftBox.insert_child_at_index(actors[0], 1);
 		}
-		
+
 		if (boxes[1].get_children().length) {
-			if (settings.get_boolean(SETTINGS_BUTTONS_LEFT)) {
-			    Main.panel._leftBox.insert_child_at_index(actors[1], Main.panel._leftBox.get_children().length);
-                        } else {
-                            Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
-                        }
+			if (buttonsPosition == "left") {
+				let appMenuBox = Main.panel.statusArea.appMenu.actor.get_parent()
+				let leftBox = appMenuBox.get_parent();
+				leftBox.insert_child_above(actors[1], appMenuBox);
+			} else {
+				Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
+			}
 		}
-		
+
 		updateVisibility();
 		return false;
 	});
@@ -101,7 +103,7 @@ function destroyButtons() {
 		actors[i].destroy();
 		boxes[i].destroy();
 	}
-	
+
 	actors = [];
 	boxes = [];
 }
@@ -114,7 +116,7 @@ function leftclick(callback) {
 		if (event.get_button() !== 1) {
 			return;
 		}
-		
+
 		return callback(actor, event);
 	}
 }
@@ -125,7 +127,7 @@ function minimize() {
 		WARN('impossible to minimize');
 		return;
 	}
-	
+
 	win.minimize();
 }
 
@@ -135,7 +137,7 @@ function maximize() {
 		WARN('impossible to maximize');
 		return;
 	}
-	
+
 	const MAXIMIZED = Meta.MaximizeFlags.BOTH;
 	if (win.get_maximized() === MAXIMIZED) {
 		win.unmaximize(MAXIMIZED);
@@ -143,7 +145,7 @@ function maximize() {
 		WARN('window shoud already be maximized');
 		win.maximize(MAXIMIZED);
 	}
-	
+
 	win.activate(global.get_current_time());
 }
 
@@ -153,7 +155,7 @@ function close() {
 		WARN('impossible to close');
 		return;
 	}
-	
+
 	win.delete(global.get_current_time());
 }
 
@@ -164,34 +166,34 @@ let activeCSS = false;
 function loadTheme() {
 	let theme = Gtk.Settings.get_default().gtk_theme_name,
 		cssPath = GLib.build_filenamev([extensionPath, 'themes', theme, 'style.css']);
-	
+
 	LOG('Load theme ' + theme);
 	if (!GLib.file_test(cssPath, GLib.FileTest.EXISTS)) {
 		cssPath = GLib.build_filenamev([extensionPath, 'themes/default/style.css']);
 	}
-	
+
 	if (cssPath === activeCSS) {
 		return;
 	}
-	
+
 	unloadTheme();
-	
+
 	// Load the new style
 	let cssFile = Gio.file_new_for_path(cssPath);
 	St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssFile);
-	
+
 	// Force style update.
 	for (let i = 0; i < actors.length; ++i) {
 		actors[i].grab_key_focus();
 	}
-	
+
 	activeCSS = cssPath;
 }
 
 function unloadTheme() {
 	if (activeCSS) {
 		LOG('Unload ' + activeCSS);
-		
+
 		let cssFile = Gio.file_new_for_path(activeCSS);
 		St.ThemeContext.get_for_stage(global.stage).get_theme().unload_stylesheet(cssFile);
 		activeCSS = false;
@@ -211,43 +213,45 @@ function updateVisibility() {
 			visible = win.decorated;
 		}
 	}
-	
+
 	for (let i = 0; i < actors.length; ++i) {
 		let actor = actors[i];
 		if(!boxes[i].get_children().length) {
 			continue;
 		}
-		
+
 		if(visible) {
 			actor.show();
 		} else {
 			actor.hide();
 		}
 	}
-	
+
 	return false;
 }
 
 /*
  * Subextension hooks
  */
+
+function setButtonsPosition(position) {
+	buttonsPosition = position;
+}
+
 let extensionPath;
-let settings;
 function init(extensionMeta) {
 	extensionPath = extensionMeta.path;
-	settings = Convenience.getSettings();
 }
 
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
-let _sigButtonLeft;
 function enable() {
 	createButtons();
 	loadTheme();
-	
+
 	overviewCallbackIDs.push(Main.overview.connect('showing', updateVisibility));
 	overviewCallbackIDs.push(Main.overview.connect('hidden', updateVisibility));
-	
+
 	wmCallbackIDs.push(global.window_manager.connect('switch-workspace', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('map', updateVisibility));
 	wmCallbackIDs.push(global.window_manager.connect('minimize', updateVisibility));
@@ -260,28 +264,25 @@ function enable() {
 		// Gnome 3.18
 		wmCallbackIDs.push(global.window_manager.connect('size-change', updateVisibility));
 	}
-	
+
 	// note: 'destroy' needs a delay for .list_windows() report correctly
 	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
 		Mainloop.idle_add(updateVisibility);
 	}));
-	_sigButtonLeft = settings.connect('changed::'+SETTINGS_BUTTONS_LEFT, createButtons);
 }
 
 function disable() {
 	for (let i = 0; i < wmCallbackIDs.length; ++i) {
 		global.window_manager.disconnect(wmCallbackIDs[i]);
 	}
-	
+
 	for (let i = 0; i < overviewCallbackIDs.length; ++i) {
 		Main.overview.disconnect(overviewCallbackIDs[i]);
 	}
-	
+
 	wmCallbackIDs = [];
 	overviewCallbackIDs = [];
-	
+
 	unloadTheme();
 	destroyButtons();
-	_sigButtonLeft.destroy();
 }
-
