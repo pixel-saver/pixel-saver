@@ -44,27 +44,50 @@
  * [5]:http://www.webupd8.org/2011/05/how-to-remove-maximized-windows.html
  *
  */
+
+const SETTINGS_BUTTONS_LEFT = 'buttons-placement-left';
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Decoration = Me.imports.decoration;
 const Buttons = Me.imports.buttons;
 const AppMenu = Me.imports.app_menu;
+const Convenience = Me.imports.convenience;
 
+let settings;
 function init(extensionMeta) {
 	Buttons.init(extensionMeta);
 	Decoration.init(extensionMeta);
 	AppMenu.init(extensionMeta);
+	settings = Convenience.getSettings();
 }
+
+function updateButtonsPlacement() {
+	let position = settings.get_boolean(SETTINGS_BUTTONS_LEFT) ? "left" : "right";
+	Buttons.setButtonsPosition(position);
+	Buttons.createButtons();
+}
+
+let _sigButtonLeft;
+function enableSettings() {
+	_sigButtonLeft = settings.connect('changed::' + SETTINGS_BUTTONS_LEFT, updateButtonsPlacement);
+	updateButtonsPlacement(); // initial settings
+}
+
+function disableSettings() {
+	settings.disconnect(_sigButtonLeft);
+}
+
 
 function enable() {
 	Buttons.enable();
 	Decoration.enable();
 	AppMenu.enable();
+	enableSettings();
 }
 
 function disable() {
 	AppMenu.disable();
 	Decoration.disable();
 	Buttons.disable();
+	disableSettings();
 }
-

@@ -1,0 +1,9 @@
+<schemalist>
+	<schema id="org.gnome.shell.extensions.pixel-saver" path="/org/gnome/shell/extensions/pixel-saver/">
+		<key name="buttons-placement-left" type="b">
+			<default>false</default>
+			<summary>Window buttons next to application menu</summary>
+			<description>Moves window buttons next to the application menu</description>
+		</key>
+	</schema>
+</schemalist>
