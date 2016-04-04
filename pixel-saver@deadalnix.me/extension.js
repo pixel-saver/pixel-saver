@@ -49,15 +49,27 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Decoration = Me.imports.decoration;
 const Buttons = Me.imports.buttons;
 const AppMenu = Me.imports.app_menu;
+const Convenience = Me.imports.convenience; 
+
+const SHOW_BUTTONS = 'show-buttons';
+
+let changedSignal;
+let settings;
 
 function init(extensionMeta) {
+	log("[pixel-saver] init");
 	Buttons.init(extensionMeta);
 	Decoration.init(extensionMeta);
 	AppMenu.init(extensionMeta);
+
+	settings = Convenience.getSettings();
 }
 
 function enable() {
-	Buttons.enable();
+	connectSettings();
+	if (settings.get_boolean(SHOW_BUTTONS)) {
+		Buttons.enable();
+	}
 	Decoration.enable();
 	AppMenu.enable();
 }
@@ -65,6 +77,29 @@ function enable() {
 function disable() {
 	AppMenu.disable();
 	Decoration.disable();
-	Buttons.disable();
+	if (settings.get_boolean(SHOW_BUTTONS)) {
+		Buttons.disable();
+	}
+	disconnectSettings();
+}
+
+function connectSettings() {
+	changedSignal = settings.connect('changed', settingChanged);
+}
+
+function disconnectSettings() {
+	settings.disconnect(changedSignal);
+}
+
+function settingChanged(settings, key) {
+	switch (key) {
+		case SHOW_BUTTONS:
+			if (settings.get_boolean(key)) {
+				Buttons.enable();
+			} else {
+				Buttons.disable();
+			}
+			break;
+	}
 }
 

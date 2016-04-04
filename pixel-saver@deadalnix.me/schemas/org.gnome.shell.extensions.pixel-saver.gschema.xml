@@ -1,0 +1,9 @@
+<schemalist>
+	<schema id="org.gnome.shell.extensions.pixel-saver" path="/org/gnome/shell/extensions/pixel-saver/">
+		<key name="show-buttons" type="b">
+			<default>true</default>
+			<summary>Shows window buttons in the top bar.</summary>
+			<description>Shows window buttons in the top bar.</description>
+		</key>
+	</schema>
+</schemalist>
