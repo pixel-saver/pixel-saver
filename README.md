@@ -1,48 +1,74 @@
 Pixel Saver
 ===========
 
-Pixel Saver is an extension for Gnome Shell that merge the activity bar and the title bar of maximized window. It is especially interesting for small screens, but MOAR pixels for your apps is always good !
+Pixel Saver is a GNOME Shell extension that merges traditional-style title bars of maximized windows with the top panel to save screen real estate. This is especially useful on small screens, but more pixels for your applications is always a good thing!
 
-The extension has no configuration. Its behavior is made to mimic the one of the title bar and settings affecting the title bar should reflect in Pixel Saver. It **Just Works** !
+[![Showcase Pixel Saver](showcase.gif "Pixel Saver Showcase")](showcase.mp4)
 
-<table>
-	<tr>
-		<td><img src="https://raw.github.com/deadalnix/pixel-saver/master/title.png" /></td>
-		<td><img src="https://raw.github.com/deadalnix/pixel-saver/master/icons.png" /></td>
-	</tr>
-	<tr>
-		<td colspan="2">The title bar is completely gone and integrated to the activity bar.</td>
-	</tr>
-</table>
+For applications using the modern GTK header bar, there are
+no space savings, but the application title is still displayed in the top panel to achieve a uniform appearance.
 
-It is largely inspired by [bios and mathematicalcoffee's Window Buttons Extension](https://github.com/mathematicalcoffee/Gnome-Shell-Window-Buttons-Extension) and [mathematicalcoffee's maximus extension](https://bitbucket.org/mathematicalcoffee/maximus-gnome-shell-extension) and some code come from there. You may want to check theses out, especially if you want something more configurable.
 
 Installation
 ------------
 
-Simply follow the instructions and everything should be fine :
+Install it with one click from the [GNOME extension repository](https://extensions.gnome.org/extension/723/pixel-saver/).
 
-    git clone https://github.com/deadalnix/pixel-saver.git
-    cd pixel-saver
-    # Get the last released version
-	git checkout 1.4
-    # copy to extensions directory
-    cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
-    # activate
-    gnome-shell-extension-tool -e pixel-saver@deadalnix.me
+### Dependencies
+
+Pixel Saver depends on X, namely `xprop` and `xwininfo`. If not already present on your system, these can be installed using:
+
+* Debian/Ubuntu: `apt install x11-utils`
+* Fedora/RHEL: `dnf install xorg-x11-utils`
+* Arch: `pacman -S xorg-xprop`
+
+### Build from source
+
+To install the most recent version manually, make sure `make` and
+`xtgettext` are installed and follow the steps below:
+
+    $ git clone https://github.com/deadalnix/pixel-saver.git
+    $ cd pixel-saver
+    $ git checkout -b 3.14
+    $ make clean install
+
+For code changes to become effective, you might need to reload GNOME Shell by pressing <kbd>Alt</kbd> + <kbd>F2</kbd> and entering <kbd>r</kbd> .
+
 
 Configuration
 -------------
 
-Don't be silly !
+To configure Pixel Saver it is recommended to use the provided GUI. Either via the
+[GNOME Shell plugin](https://extensions.gnome.org/local/) in your browser, GNOME Tweak Tool (if installed)
+or `gnome-shell-extension-prefs pixel-saver@deadalnix.me` from the command-line.
 
-Support for older versions of gnome shell
------------
+![Preferences GUI](prefs.png "Pixel Saver Preferences")
 
-Version 1.3 will be the last version to support gnome shell prior to 3.12 .
+The following configuration options are available.
 
-Screenshots
------------
+### Expand space for application title
 
-If you want to see what the full destktop look like with this extension, you can check out what a [unmaximized window](https://raw.github.com/deadalnix/pixel-saver/master/unmax.png) looks like, as well as a [maximized one](https://raw.github.com/deadalnix/pixel-saver/master/max.png).
+Sets whether the available space for the application title in the top panel should be maximized. When enabled, this moves the clock to the right edge of the panel and uses all available space for the application title.
 
+### Show window buttons in top panel
+
+Sets whether and where window control buttons of maximized windows should be displayed in the top panel.
+
+* **Before application name**  
+	Display window buttons before the application name on the left
+* **After application name**  
+  Display window buttons after the application name on the left
+* **Within system status area** (default)  
+	Display window buttons within the system status area on the right
+* **After system status area**  
+  Display window buttons after the system status area on the right
+* **Don't show**  
+	Don't display window buttons in the top panel. You have to use the corresponding keyboard shortcuts
+
+
+Acknowledgement
+---------------
+
+Pixel Saver is largely inspired by the [Window Buttons](https://github.com/mathematicalcoffee/Gnome-Shell-Window-Buttons-Extension)
+and [Maximus](https://bitbucket.org/mathematicalcoffee/maximus-gnome-shell-extension) extensions
+and utilizes code from both. A big thanks to their authors!
