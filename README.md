@@ -3,7 +3,7 @@ Pixel Saver
 
 Pixel Saver is a GNOME Shell extension that merges traditional-style title bars of maximized windows with the top panel to save screen real estate. This is especially useful on small screens, but more pixels for your applications is always a good thing!
 
-[![Showcase Pixel Saver](showcase.gif "Pixel Saver Showcase")](showcase.mp4)
+[![Showcase Pixel Saver](showcase.gif "Pixel Saver Showcase")](https://raw.github.com/marcohu/pixel-saver/3.14/showcase.mp4)
 
 For applications using the modern GTK header bar, there are
 no space savings, but the application title is still displayed in the top panel to achieve a uniform appearance.
