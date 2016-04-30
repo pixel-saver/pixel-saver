@@ -109,7 +109,9 @@ function guessWindowXID(win) {
 
 	// debugging for when people find bugs..
 	WARN("Could not find XID for window with title %s".format(win.title));
-	return null;
+
+	// if we can't find an atom, assume the titlebar not to be hidden
+	return win._pixelSaverOriginalState = false;
 }
 
 /**
