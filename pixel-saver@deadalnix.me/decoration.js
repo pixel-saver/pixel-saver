@@ -109,9 +109,14 @@ function guessWindowXID(win) {
 
 	// debugging for when people find bugs..
 	WARN("Could not find XID for window with title %s".format(win.title));
+	return null;
+}
 
-	// if we can't find an atom, assume the titlebar not to be hidden
-	return win._pixelSaverOriginalState = false;
+const WindowState = {
+	DEFAULT: 'default',
+	HIDE_TITLEBAR: 'hide_titlebar',
+	UNDECORATED: 'undecorated',
+	UNKNOWN: 'unknown'
 }
 
 /**
@@ -124,6 +129,10 @@ function getOriginalState(win) {
 	if (win._pixelSaverOriginalState !== undefined) {
 		return win._pixelSaverOriginalState;
 	}
+
+	if (!win.decorated) {
+		return win._pixelSaverOriginalState = WindowState.UNDECORATED;
+	}
 	
 	let id = guessWindowXID(win);
 	let cmd = 'xprop -id ' + id;
@@ -132,13 +141,13 @@ function getOriginalState(win) {
 	let xprops = GLib.spawn_command_line_sync(cmd);
 	if (!xprops[0]) {
 		WARN("xprop failed for " + win.title + " with id " + id);
-		return false;
+		return win._pixelSaverOriginalState = State.UNKNOWN;
 	}
 	
 	let str = xprops[1].toString();
 	let m = str.match(/^_PIXEL_SAVER_ORIGINAL_STATE\(CARDINAL\) = ([0-9]+)$/m);
 	if (m) {
-		return win._pixelSaverOriginalState = !!m[1];
+		return win._pixelSaverOriginalState = !!m[1] ? WindowState.HIDE_TITLEBAR : WindowState.DEFAULT;
 	}
 	
 	m = str.match(/^_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED(\(CARDINAL\))? = ([0-9]+)$/m);
@@ -150,11 +159,13 @@ function getOriginalState(win) {
 		      (state ? '0x1' : '0x0')];
 		LOG(cmd.join(' '));
 		Util.spawn(cmd);
-		return win._pixelSaverOriginalState = state;
+		return win._pixelSaverOriginalState = state ? WindowState.HIDE_TITLEBAR : WindowState.DEFAULT;
 	}
 	
 	WARN("Can't find original state for " + win.title + " with id " + id);
-	return false;
+
+	// if we can't find an atom, assume the titlebar not to be hidden
+	return win._pixelSaverOriginalState = WindowState.DEFAULT;
 }
 
 /**
@@ -363,8 +374,9 @@ function disable() {
 			continue;
 		}
 		
-		LOG('stopUndecorating: ' + win.title);
-		if (getOriginalState(win) === false) {
+		let state = getOriginalState(win);
+		LOG('stopUndecorating: ' + win.title + ' original=' + state);
+		if (state == WindowState.DEFAULT) {
 			setHideTitlebar(win, false);
 		}
 		
