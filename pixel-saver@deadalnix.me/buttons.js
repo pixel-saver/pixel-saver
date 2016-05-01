@@ -252,7 +252,7 @@ function enable() {
 	}
 	
 	// note: 'destroy' needs a delay for .list_windows() report correctly
-    wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
+	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
 		Mainloop.idle_add(updateVisibility);
 	}));
 }
