@@ -341,7 +341,7 @@ function enable() {
 
 function disable() {
 	if (changeWorkspaceID) {
-		global.window_manager.disconnect(changeWorkspaceID);
+		global.screen.disconnect(changeWorkspaceID);
 		changeWorkspaceID = 0;
 	}
 	
