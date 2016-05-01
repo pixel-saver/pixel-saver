@@ -190,7 +190,7 @@ function enable() {
 	tooltip.opacity = 0;
 	appMenu = Main.panel.statusArea.appMenu;
 	
-	focusCallbackID = Shell.WindowTracker.get_default().connect('notify::focus-app', onFocusChange);
+	focusCallbackID = global.display.connect('notify::focus-window', onFocusChange);
 	
 	try {
 		// Gnome 3.16
@@ -211,8 +211,9 @@ function enable() {
 
 function disable() {
 	appMenu.actor.disconnect(tooltipCallbackID);
+	tooltipCallbackID = 0;
 	
-	Shell.WindowTracker.get_default().disconnect(focusCallbackID);
+	global.display.disconnect(focusCallbackID);
 	focusCallbackID = 0;
 	
 	for (let i = 0; i < wmCallbackIDs.length; ++i) {
