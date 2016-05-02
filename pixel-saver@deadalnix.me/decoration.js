@@ -48,8 +48,9 @@ function guessWindowXID(win) {
 	
 	// use xwininfo, take first child.
 	let act = win.get_compositor_private();
-	if (act) {
-		let xwininfo = GLib.spawn_command_line_sync('xwininfo -children -id 0x%x'.format(act['x-window']));
+	let xwindow = act && act['x-window'];
+	if (xwindow) {
+		let xwininfo = GLib.spawn_command_line_sync('xwininfo -children -id 0x%x'.format(xwindow));
 		if (xwininfo[0]) {
 			let str = xwininfo[1].toString();
 
