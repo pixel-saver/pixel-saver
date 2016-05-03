@@ -164,7 +164,9 @@ function getOriginalState(win) {
 	
 	WARN("Can't find original state for " + win.title + " with id " + id);
 
-	// if we can't find an atom, assume the titlebar not to be hidden
+	// GTK uses the _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED atom to indicate that the
+	// title bar should be hidden when maximized. If we can't find this atom, the
+	// window uses the default behavior
 	return win._pixelSaverOriginalState = WindowState.DEFAULT;
 }
 
