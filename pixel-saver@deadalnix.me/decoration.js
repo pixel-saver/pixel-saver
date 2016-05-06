@@ -253,7 +253,7 @@ function onWindowAdded(ws, win, retry) {
 		return false;
 	}
 	
-	let retry = 3;
+	retry = 3;
 	Mainloop.idle_add(function () {
 		let id = guessWindowXID(win);
 		if (!id) {
