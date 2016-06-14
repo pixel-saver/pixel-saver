@@ -1,0 +1,17 @@
+<schemalist>
+	<enum id="org.gnome.shell.extensions.pixel-saver.buttonPosition">
+		<value value="0" nick="before-name" />
+		<value value="1" nick="after-name" />
+		<value value="2" nick="within-status-area" />
+		<value value="3" nick="after-status-area" />
+		<value value="4" nick="hidden" />
+	</enum>
+	<schema id="org.gnome.shell.extensions.pixel-saver" path="/org/gnome/shell/extensions/pixel-saver/">
+		<key enum="org.gnome.shell.extensions.pixel-saver.buttonPosition" name="button-position">
+			<default>'within-status-area'</default>
+			<summary>Button position in the top panel</summary>
+			<description>Controls whether and where buttons of maximized windows appear in the top panel. Possible values are: "before-name" to display buttons before the application name, "after-name" to display buttons after the application name, "within-status-area" to display buttons within the system status area, "after-status-area" to display buttons after the system status area and "hidden" to not show buttons at all.
+			</description>
+		</key>
+	</schema>
+</schemalist>

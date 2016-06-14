@@ -1,6 +1,7 @@
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
+const Lang = imports.lang;
 const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
@@ -8,7 +9,16 @@ const St = imports.gi.St;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const Settings = Me.imports.settings;
 const Util = Me.imports.util;
+
+const Position = {
+	BEFORE_NAME: 'before-name',
+	AFTER_NAME: 'after-name',
+	WITHIN_STATUS_AREA: 'within-status-area',
+	AFTER_STATUS_AREA: 'after-status-area',
+	HIDDEN: 'hidden'
+}
 
 function LOG(message) {
 	// log("[pixel-saver]: " + message);
@@ -24,6 +34,8 @@ function WARN(message) {
 const DCONF_META_PATH = 'org.gnome.desktop.wm.preferences';
 
 let actors = [], boxes = [];
+let options = null;
+
 function createButtons() {
 	// Ensure we do not create buttons twice.
 	destroyButtons();
@@ -81,7 +93,26 @@ function createButtons() {
 		}
 		
 		if (boxes[1].get_children().length) {
-			Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
+			switch (options.BUTTON_POSITION.get()) {
+				case Position.BEFORE_NAME: {
+					let activitiesBox = Main.panel.statusArea.activities.actor.get_parent()
+					let leftBox = activitiesBox.get_parent();
+					leftBox.insert_child_above(actors[1], activitiesBox);
+					break;
+				}
+				case Position.AFTER_NAME: {
+					let appMenuBox = Main.panel.statusArea.appMenu.actor.get_parent()
+					let leftBox = appMenuBox.get_parent();
+					leftBox.insert_child_above(actors[1], appMenuBox);
+					break;
+				}
+				case Position.WITHIN_STATUS_AREA:
+					Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
+					break;
+				case Position.AFTER_STATUS_AREA:
+					Main.panel._rightBox.add(actors[1]);
+					break;
+			}
 		}
 		
 		updateVisibility();
@@ -231,7 +262,20 @@ function init(extensionMeta) {
 
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
-function enable() {
+let options;
+
+function loadOptions() {
+	options = new Settings.Options();
+	options.BUTTON_POSITION.changed(Lang.bind(this, function() {
+		if (options.BUTTON_POSITION.get() == Position.HIDDEN) {
+			hideButtons();
+		} else {
+			showButtons();
+		}
+	}));
+}
+
+function showButtons() {
 	createButtons();
 	loadTheme();
 	
@@ -257,7 +301,7 @@ function enable() {
 	}));
 }
 
-function disable() {
+function hideButtons() {
 	for (let i = 0; i < wmCallbackIDs.length; ++i) {
 		global.window_manager.disconnect(wmCallbackIDs[i]);
 	}
@@ -271,5 +315,17 @@ function disable() {
 	
 	unloadTheme();
 	destroyButtons();
+}
+
+function enable() {
+	loadOptions();
+	if (options.BUTTON_POSITION.get() != Position.HIDDEN ) {
+		showButtons();
+	}
+}
+
+function disable() {
+	hideButtons();
+	options.destroy();
 }
 
