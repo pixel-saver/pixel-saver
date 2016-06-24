@@ -197,9 +197,11 @@ function enable() {
 		wmCallbackIDs.push(global.window_manager.connect('maximize', updateAppMenu));
 		wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateAppMenu));
 	} catch (e) {
-		// Gnome 3.18
+		// Gnome 3.18+
 		wmCallbackIDs.push(global.window_manager.connect('size-change', updateAppMenu));
 	}
+	
+	wmCallbackIDs.push(global.window_manager.connect('hide-tile-preview', updateAppMenu));
 	
 	// note: 'destroy' needs a delay for .list_windows() report correctly
 	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
