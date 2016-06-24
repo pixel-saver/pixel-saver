@@ -11,9 +11,9 @@ function getWindow() {
 	);
 	
 	let i = windows.length;
-    while (i--) {
-    	let window = windows[i];
-    	if (window.get_maximized() === MAXIMIZED && !window.minimized) {
+	while (i--) {
+		let window = windows[i];
+		if (window.get_maximized() === MAXIMIZED && !window.minimized) {
 			return window;
 		}
 	}

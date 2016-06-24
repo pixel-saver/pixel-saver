@@ -247,9 +247,12 @@ function enable() {
 		wmCallbackIDs.push(global.window_manager.connect('maximize', updateVisibility));
 		wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateVisibility));
 	} catch (e) {
-		// Gnome 3.18
+		// Gnome 3.18+
 		wmCallbackIDs.push(global.window_manager.connect('size-change', updateVisibility));
 	}
+	
+	// Needed for showing buttons on window drag to top panel
+	wmCallbackIDs.push(global.window_manager.connect('hide-tile-preview', updateVisibility));
 	
 	// note: 'destroy' needs a delay for .list_windows() report correctly
 	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
