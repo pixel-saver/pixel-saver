@@ -1,28 +1,5 @@
-/* The box-bin element holds the button-box element which holds each window-button.
- *
- * Control spacing between each button via .button-box.
- */
-.box-bin { 
-	border-width: 0px;
-	padding: 0px;
-	margin: 0px;
-}
-
-.button-box {
-	spacing: 4px;
-}
-
-/* The style for each individual window button */
-.window-button {
-	width: 24px;
-	height: 20px;
-}
-
-/* The style for the window button when hovered over */
-.window-button:hover {
-}
-
-/* Here you can style each individual button. You need to define style classes
+/**
+ * Here you can style each individual button. You need to define style classes
  * ".minimize", ".maximize" and ".close".
  * You can additionally define styles for the :hover and :active pseudo classes
  * if you wish.
@@ -38,11 +15,11 @@
 }
 
 /* Style for the maximize button */
-.maximize {
+.restore {
 	background-image: url('titlebutton-max.png');
 }
 
-.maximize:hover {
+.restore:hover {
 	background-image: url('titlebutton-max-hover.png');
 }
 

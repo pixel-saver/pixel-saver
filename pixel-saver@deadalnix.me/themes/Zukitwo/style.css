@@ -23,38 +23,26 @@
     background-gradient-end: rgba(249,249,249,1);
 }
 
-.minimize {
-    
-}
-
+.minimize {}
 .minimize:hover {
     border-color: rgba(209,174,51,0.75);
 }
-
 .minimize:active {
     border-color: rgba(202,169,49,0.75);
 }
 
-.maximize {
-    
-}
-
-.maximize:hover {
+.restore {}
+.restore:hover {
     border-color: rgba(80,209,51,0.75);
 }
-
-.maximize:active {
+.restore:active {
     border-color: rgba(85,179,64,0.75);
 }
 
-.close {
-    
-}
-
+.close {}
 .close:hover {
     border-color: rgba(189,46,46,0.75);
 }
-
 .close:active {
     border-color: rgba(209,51,51,1);
 }

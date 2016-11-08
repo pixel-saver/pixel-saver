@@ -1,0 +1,9 @@
+/**
+ * The buttons on the top bar have some large spacing between them by default.
+ * We need one per icon or the hovering doesn't work as expected. Therefore,
+ * the spacing needs to be adjusted manually.
+ */
+.pixel-saver-button {
+	-natural-hpadding: 0px;
+	-minimum-hpadding: 0px;
+}

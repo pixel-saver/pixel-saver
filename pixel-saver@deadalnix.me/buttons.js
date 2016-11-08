@@ -1,9 +1,11 @@
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
+const Lang = imports.lang;
 const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
+const PanelMenu = imports.ui.panelMenu;
 const St = imports.gi.St;
 
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -19,36 +21,70 @@ function WARN(message) {
 }
 
 /**
- * Buttons
+ * A class for button we insert in the activity bar.
  */
-const DCONF_META_PATH = 'org.gnome.desktop.wm.preferences';
+const Button = new Lang.Class({
+	Name: 'PixelSaverButtons',
+	Extends: PanelMenu.Button,
+	
+	_init: function(action, callback) {
+		this.parent(0.0, "Pixel Saver Buttons", true);
+		
+		this.actor.connect('button-release-event', leftclick(callback));
+		this.actor.add_style_class_name('pixel-saver-button');
+		this.actor.add_actor(new St.Icon({
+			style_class: 'system-status-icon',
+			icon_name: 'window-' + action + '-symbolic'
+		}));
+		
+		/*
+		this.parent(0.0, "Pixel Saver Buttons", true);
+		
+		let child = null, trigger = null;
+		
+		// If we know that theme, use it.
+		if (false && theme !== DEFAULT_THEME) {
+			trigger = this.actor;
+			child = new St.Button({
+				style_class: action + ' system-status-icon',
+				track_hover: true
+			});
+		} else {
+			trigger = this.actor;
+			child = new St.Icon({
+				style_class: action + ' system-status-icon',
+				icon_name: 'window-' + action + '-symbolic'
+			});
+		}
+		
+		this.actor.add_actor(child);
+		this.actor.add_style_class_name('pixel-saver-button');
+		
+		this.actor.connect('button-release-event', leftclick(callback));
+		// */
+	},
+	
+	show: function() {
+		this.actor.show();
+	},
+	
+	hide: function() {
+		this.actor.hide();
+	}
+});
 
-let actors = [], boxes = [];
-function createButtons() {
-	// Ensure we do not create buttons twice.
-	destroyButtons();
+/**
+ * Facilities to create and track buttons.
+ */
+let buttons = [];
+
+function insertButtons(side, actions) {
+	const sides = ['left', 'right'];
+	let position = sides[side];
 	
-	actors = [
-		new St.Bin({ style_class: 'box-bin'}),
-		new St.Bin({ style_class: 'box-bin'})
-	];
-	
-	boxes = [
-		new St.BoxLayout({ style_class: 'button-box' }),
-		new St.BoxLayout({ style_class: 'button-box' })
-	];
-	
-	actors.forEach(function(actor, i) {
-		actor.add_actor(boxes[i]);
-	});
-	
-	let order = new Gio.Settings({schema_id: DCONF_META_PATH}).get_string('button-layout');
-	LOG('Buttons layout : ' + order);
-	
-	let orders = order.replace(/ /g, '').split(':');
-	
-	orders[0] = orders[0].split(',');
-	orders[1] = orders[1].split(',');
+	let baseIndex = side
+		? Main.panel._rightBox.get_children().length - 1
+		: Main.panel._leftBox.get_children().length;
 	
 	const callbacks = {
 		minimize : minimize,
@@ -56,54 +92,60 @@ function createButtons() {
 		close    : close
 	};
 	
-	for (let bi = 0; bi < boxes.length; ++bi) {
-		let order = orders[bi],
-			box = boxes[bi];
-		
-		for (let i = 0; i < order.length; ++i) {
-			if (!order[i]) {
-				continue;
-			}
-			
-			if (!callbacks[order[i]]) {
-				// Skip if the button's name is not right...
-				WARN("\'%s\' is not a valid button.".format(order[i]));
-				continue;
-			}
-			
-			let button = new St.Button({
-				style_class: order[i]  + ' window-button',
-				track_hover: true
-			});
-			
-			button.connect('button-release-event', leftclick(callbacks[order[i]]));
-			box.add(button);
+	const icons = {
+		minimize : 'minimize',
+		maximize : 'restore',
+		close    : 'close'
+	};
+	
+	for (let i = 0; i < actions.length; ++i) {
+		let action = actions[i];
+		if (!action) {
+			continue;
 		}
+		
+		let callback = callbacks[action];
+		if (!callback) {
+			// Skip if the button's name is not right...
+			WARN("\'%s\' is not a valid button.".format(action));
+			continue;
+		}
+		
+		let icon = icons[action];
+		let button = new Button(icon, callback);
+		buttons.push(button);
+		
+		Main.panel.addToStatusArea(
+			icon,
+			button,
+			baseIndex + i,
+			position
+		);
+	}
+}
+
+function createButtons() {
+	// Ensure we do not create buttons twice.
+	destroyButtons();
+	
+	const DCONF_META_PATH = 'org.gnome.desktop.wm.preferences';
+	let buttonLayout = new Gio.Settings({schema_id: DCONF_META_PATH}).get_string('button-layout');
+	LOG('Button layout : ' + buttonLayout);
+	
+	let actions = buttonLayout.replace(/ /g, '').split(':');
+	for (let i = 0; i < actions.length; ++i) {
+		insertButtons(i, actions[i].split(','));
 	}
 	
-	Mainloop.idle_add(function () {
-		// 1 for activity button and -1 for the menu
-		if (boxes[0].get_children().length) {
-			Main.panel._leftBox.insert_child_at_index(actors[0], 1);
-		}
-		
-		if (boxes[1].get_children().length) {
-			Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
-		}
-		
-		updateVisibility();
-		return false;
-	});
+	updateVisibility();
 }
 
 function destroyButtons() {
-	actors.forEach(function(actor, i) {
-		actor.destroy();
-		boxes[i].destroy();
+	buttons.forEach(function(button) {
+		button.destroy();
 	});
 	
-	actors = [];
-	boxes = [];
+	buttons = [];
 }
 
 /**
@@ -158,43 +200,79 @@ function close() {
 }
 
 /**
- * Theming
+ * Theme related functions.
+ *
+ * The theme variable indicate the current active theme.
+ * Null if it is a theme we do not support.
  */
-let activeCSS = false;
+let theme = null;
+
+const DEFAULT_THEME = 'default';
+
 function loadTheme() {
-	let theme = Gtk.Settings.get_default().gtk_theme_name,
-		cssPath = GLib.build_filenamev([extensionPath, 'themes', theme, 'style.css']);
-	
-	LOG('Load theme ' + theme);
-	if (!GLib.file_test(cssPath, GLib.FileTest.EXISTS)) {
-		cssPath = GLib.build_filenamev([extensionPath, 'themes/default/style.css']);
+	let defaultCSS = GLib.build_filenamev([extensionPath, 'themes', 'default.css']);
+	if (!GLib.file_test(defaultCSS, GLib.FileTest.EXISTS)) {
+		WARN("Failed to load %s".format(defaultCSS));
 	}
 	
-	if (cssPath === activeCSS) {
+	let gtkTheme = Gtk.Settings.get_default().gtk_theme_name;
+	let themeCSS = GLib.build_filenamev([extensionPath, 'themes', gtkTheme, 'style.css']);
+	
+	if (!GLib.file_test(themeCSS, GLib.FileTest.EXISTS)) {
+		LOG("Failed to load theme %s, using default instead.".format(gtkTheme));
+		gtkTheme = DEFAULT_THEME;
+	}
+	
+	if (theme === gtkTheme) {
 		return;
 	}
 	
 	unloadTheme();
 	
 	// Load the new style
-	let cssFile = Gio.file_new_for_path(cssPath);
-	St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssFile);
+	let themeCtx = St.ThemeContext.get_for_stage(global.stage).get_theme();
+	
+	// If we never set a theme, we need to load the default CSS.
+	if (theme === null) {
+		LOG('Loading default.css');
+		themeCtx.load_stylesheet(Gio.file_new_for_path(defaultCSS));
+	}
+	
+	// If we have a known theme, load it.
+	if (gtkTheme !== DEFAULT_THEME) {
+		LOG('Loading theme ' + gtkTheme);
+		themeCtx.load_stylesheet(Gio.file_new_for_path(themeCSS));
+	}
+	
+	// Register the new theme.
+	theme = gtkTheme;
 	
 	// Force style update.
-	actors.forEach(function(actor) {
-		actor.grab_key_focus();
-	});
-	
-	activeCSS = cssPath;
+	createButtons();
 }
 
-function unloadTheme() {
-	if (activeCSS) {
-		LOG('Unload ' + activeCSS);
+function unloadTheme(unloadDefault = false) {
+	if (theme === null) {
+		return;
+	}
+	
+	let themeCtx = St.ThemeContext.get_for_stage(global.stage).get_theme();
+	if (theme !== DEFAULT_THEME) {
+		LOG('Unloading theme ' + theme);
 		
-		let cssFile = Gio.file_new_for_path(activeCSS);
-		St.ThemeContext.get_for_stage(global.stage).get_theme().unload_stylesheet(cssFile);
-		activeCSS = false;
+		let themeCSS = GLib.build_filenamev([extensionPath, 'themes', theme, 'style.css']);
+		themeCtx.unload_stylesheet(themeCSS);
+		
+		theme = DEFAULT_THEME;
+	}
+	
+	if (unloadDefault) {
+		LOG('Unloading default.css');
+		
+		let defaultCSS = GLib.build_filenamev([extensionPath, 'themes', 'default.css']);
+		themeCtx.unload_stylesheet(themeCSS);
+		
+		theme = null;
 	}
 }
 
@@ -212,15 +290,11 @@ function updateVisibility() {
 		}
 	}
 	
-	actors.forEach(function(actor, i) {
-		if (!boxes[i].get_children().length) {
-			return;
-		}
-		
+	buttons.forEach(function(button) {
 		if (visible) {
-			actor.show();
+			button.show();
 		} else {
-			actor.hide();
+			button.hide();
 		}
 	});
 	
@@ -275,6 +349,5 @@ function disable() {
 	}
 	
 	destroyButtons();
-	unloadTheme();
+	unloadTheme(true);
 }
-
