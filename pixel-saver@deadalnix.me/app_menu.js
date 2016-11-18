@@ -19,7 +19,7 @@ function WARN(message) {
 
 let appMenu = null;
 
-/*
+/**
  * AppMenu synchronization
  */
 function updateAppMenu() {
@@ -43,7 +43,7 @@ function updateAppMenu() {
 	return false;
 }
 
-/*
+/**
  * Track the focused window's title
  */
 let activeWindow = null;
@@ -65,7 +65,7 @@ function changeActiveWindow(win) {
 	}
 }
 
-/*
+/**
  * Focus change
  */
 function onFocusChange() {
@@ -83,7 +83,7 @@ function onFocusChange() {
 	return false;
 }
 
-/*
+/**
  * tooltip
  */
 let tooltip = null;
@@ -113,7 +113,7 @@ function onAppMenuHover(actor) {
 			
 			let label = appMenu._label._label;
 			
-			if(!label.get_clutter_text().get_layout().is_ellipsized()) {
+			if (!label.get_clutter_text().get_layout().is_ellipsized()) {
 				// Do not need to hide.
 				tooltipDelayCallbackID = 0;
 				return false;
@@ -147,11 +147,11 @@ function onAppMenuHover(actor) {
 			return false;
 		});
 	} else if (tooltipDelayCallbackID > 0) {
-		if(!Mainloop.source_remove(tooltipDelayCallbackID)) {
+		if (!Mainloop.source_remove(tooltipDelayCallbackID)) {
 			// If the event ran, then we hide.
 			LOG('hide title tooltip');
 			
-			if(menuCallbackID) {
+			if (menuCallbackID) {
 				appMenu.menu.disconnect(menuCallbackID);
 				menuCallbackID = 0;
 			}
@@ -173,7 +173,7 @@ function onAppMenuHover(actor) {
 	return false;
 }
 
-/*
+/**
  * Subextension hooks
  */
 function init() {
@@ -186,6 +186,7 @@ function init() {
 let wmCallbackIDs = [];
 let focusCallbackID = 0;
 let tooltipCallbackID = 0;
+
 function enable() {
 	tooltip.opacity = 0;
 	appMenu = Main.panel.statusArea.appMenu;
@@ -224,18 +225,18 @@ function disable() {
 	
 	wmCallbackIDs = [];
 	
-	if(activeWindow) {
+	if (activeWindow) {
 		activeWindow.disconnect(awCallbackID);
 		awCallbackID = 0;
 		activeWindow = null;
 	}
 	
-	if(tooltipDelayCallbackID) {
+	if (tooltipDelayCallbackID) {
 		Mainloop.source_remove(tooltipDelayCallbackID);
 		tooltipDelayCallbackID = 0;
 	}
 	
-	if(menuCallbackID) {
+	if (menuCallbackID) {
 		appMenu.menu.disconnect(menuCallbackID);
 		menuCallbackID = 0;
 	}
