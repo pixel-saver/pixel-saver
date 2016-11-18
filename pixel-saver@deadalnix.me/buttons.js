@@ -237,10 +237,11 @@ function init(extensionMeta) {
 
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
+let themeCallbackID = 0;
 
 function enable() {
-	createButtons();
 	loadTheme();
+	createButtons();
 	
 	overviewCallbackIDs.push(Main.overview.connect('showing', updateVisibility));
 	overviewCallbackIDs.push(Main.overview.connect('hidden', updateVisibility));
@@ -252,6 +253,8 @@ function enable() {
 	wmCallbackIDs.push(wm.connect('unminimize', updateVisibility));
 	
 	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
+	
+	themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
 }
 
 function disable() {
@@ -266,7 +269,12 @@ function disable() {
 	wmCallbackIDs = [];
 	overviewCallbackIDs = [];
 	
-	unloadTheme();
+	if (themeCallbackID !== 0) {
+		Gtk.Settings.get_default().disconnect(0);
+		themeCallbackID = 0;
+	}
+	
 	destroyButtons();
+	unloadTheme();
 }
 
