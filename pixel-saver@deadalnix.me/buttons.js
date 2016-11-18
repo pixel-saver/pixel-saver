@@ -221,7 +221,7 @@ function updateVisibility() {
 	return false;
 }
 
-/*
+/**
  * Subextension hooks
  */
 let extensionPath;
@@ -238,36 +238,37 @@ function enable() {
 	overviewCallbackIDs.push(Main.overview.connect('showing', updateVisibility));
 	overviewCallbackIDs.push(Main.overview.connect('hidden', updateVisibility));
 	
-	wmCallbackIDs.push(global.window_manager.connect('switch-workspace', updateVisibility));
-	wmCallbackIDs.push(global.window_manager.connect('map', updateVisibility));
-	wmCallbackIDs.push(global.window_manager.connect('minimize', updateVisibility));
-	wmCallbackIDs.push(global.window_manager.connect('unminimize', updateVisibility));
+	let wm = global.window_manager;
+	wmCallbackIDs.push(wm.connect('switch-workspace', updateVisibility));
+	wmCallbackIDs.push(wm.connect('map', updateVisibility));
+	wmCallbackIDs.push(wm.connect('minimize', updateVisibility));
+	wmCallbackIDs.push(wm.connect('unminimize', updateVisibility));
 	try {
 		// Gnome 3.16
-		wmCallbackIDs.push(global.window_manager.connect('maximize', updateVisibility));
-		wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateVisibility));
+		wmCallbackIDs.push(wm.connect('maximize', updateVisibility));
+		wmCallbackIDs.push(wm.connect('unmaximize', updateVisibility));
 	} catch (e) {
 		// Gnome 3.18+
-		wmCallbackIDs.push(global.window_manager.connect('size-change', updateVisibility));
+		wmCallbackIDs.push(wm.connect('size-change', updateVisibility));
 	}
 	
 	// Needed for showing buttons on window drag to top panel
-	wmCallbackIDs.push(global.window_manager.connect('hide-tile-preview', updateVisibility));
+	wmCallbackIDs.push(wm.connect('hide-tile-preview', updateVisibility));
 	
 	// note: 'destroy' needs a delay for .list_windows() report correctly
-	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
+	wmCallbackIDs.push(wm.connect('destroy', function () {
 		Mainloop.idle_add(updateVisibility);
 	}));
 }
 
 function disable() {
-	for (let i = 0; i < wmCallbackIDs.length; ++i) {
-		global.window_manager.disconnect(wmCallbackIDs[i]);
-	}
+	wmCallbackIDs.forEach(function(id) {
+		global.window_manager.disconnect(id);
+	});
 	
-	for (let i = 0; i < overviewCallbackIDs.length; ++i) {
-		Main.overview.disconnect(overviewCallbackIDs[i]);
-	}
+	overviewCallbackIDs.forEach(function(id) {
+		Main.overview.disconnect(id);
+	});
 	
 	wmCallbackIDs = [];
 	overviewCallbackIDs = [];
