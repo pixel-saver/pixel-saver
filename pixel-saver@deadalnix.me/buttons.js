@@ -18,7 +18,7 @@ function WARN(message) {
 	log("[pixel-saver]: " + message);
 }
 
-/*
+/**
  * Buttons
  */
 const DCONF_META_PATH = 'org.gnome.desktop.wm.preferences';
@@ -99,7 +99,7 @@ function destroyButtons() {
 	boxes = [];
 }
 
-/*
+/**
  * Buttons actions
  */
 function leftclick(callback) {
@@ -150,7 +150,7 @@ function close() {
 	win.delete(global.get_current_time());
 }
 
-/*
+/**
  * Theming
  */
 let activeCSS = false;
@@ -191,7 +191,7 @@ function unloadTheme() {
 	}
 }
 
-/*
+/**
  * callbacks
  */
 function updateVisibility() {
@@ -231,6 +231,7 @@ function init(extensionMeta) {
 
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
+
 function enable() {
 	createButtons();
 	loadTheme();
@@ -243,22 +244,8 @@ function enable() {
 	wmCallbackIDs.push(wm.connect('map', updateVisibility));
 	wmCallbackIDs.push(wm.connect('minimize', updateVisibility));
 	wmCallbackIDs.push(wm.connect('unminimize', updateVisibility));
-	try {
-		// Gnome 3.16
-		wmCallbackIDs.push(wm.connect('maximize', updateVisibility));
-		wmCallbackIDs.push(wm.connect('unmaximize', updateVisibility));
-	} catch (e) {
-		// Gnome 3.18+
-		wmCallbackIDs.push(wm.connect('size-change', updateVisibility));
-	}
 	
-	// Needed for showing buttons on window drag to top panel
-	wmCallbackIDs.push(wm.connect('hide-tile-preview', updateVisibility));
-	
-	// note: 'destroy' needs a delay for .list_windows() report correctly
-	wmCallbackIDs.push(wm.connect('destroy', function () {
-		Mainloop.idle_add(updateVisibility);
-	}));
+	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
 }
 
 function disable() {

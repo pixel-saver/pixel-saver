@@ -191,39 +191,24 @@ function enable() {
 	tooltip.opacity = 0;
 	appMenu = Main.panel.statusArea.appMenu;
 	
+	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateAppMenu));
+	
 	focusCallbackID = global.display.connect('notify::focus-window', onFocusChange);
-	
-	try {
-		// Gnome 3.16
-		wmCallbackIDs.push(global.window_manager.connect('maximize', updateAppMenu));
-		wmCallbackIDs.push(global.window_manager.connect('unmaximize', updateAppMenu));
-	} catch (e) {
-		// Gnome 3.18+
-		wmCallbackIDs.push(global.window_manager.connect('size-change', updateAppMenu));
-	}
-	
-	wmCallbackIDs.push(global.window_manager.connect('hide-tile-preview', updateAppMenu));
-	
-	// note: 'destroy' needs a delay for .list_windows() report correctly
-	wmCallbackIDs.push(global.window_manager.connect('destroy', function () {
-		Mainloop.idle_add(updateAppMenu);
-	}));
-	
 	tooltipCallbackID = appMenu.actor.connect('notify::hover', onAppMenuHover);
 }
 
 function disable() {
-	appMenu.actor.disconnect(tooltipCallbackID);
-	tooltipCallbackID = 0;
+	wmCallbackIDs.forEach(function(id) {
+		global.window_manager.disconnect(id);
+	});
+	
+	wmCallbackIDs = [];
 	
 	global.display.disconnect(focusCallbackID);
 	focusCallbackID = 0;
 	
-	for (let i = 0; i < wmCallbackIDs.length; ++i) {
-		global.window_manager.disconnect(wmCallbackIDs[i]);
-	}
-	
-	wmCallbackIDs = [];
+	appMenu.actor.disconnect(tooltipCallbackID);
+	tooltipCallbackID = 0;
 	
 	if (activeWindow) {
 		activeWindow.disconnect(awCallbackID);

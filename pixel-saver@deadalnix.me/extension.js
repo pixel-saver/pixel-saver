@@ -1,6 +1,5 @@
-/*global global, log */ // <-- jshint
-/*jshint maxlen: 150 */
-/* @overview
+/**
+ * @overview
  * Pixel Saver v1.0
  * Amaury SECHET <deadalnix@gmail.com>
  * Other contributors:
