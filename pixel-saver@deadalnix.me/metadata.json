@@ -3,5 +3,5 @@
 	"name": "Pixel Saver",
 	"description": "Pixel Saver is designed to save pixel by fusing activity bar and title bar in a natural way",
 	"url": "https://github.com/deadalnix/pixel-saver",
-	"shell-version": ["3.16", "3.18", "3.20", "3.22"]
+	"shell-version": ["3.18", "3.20", "3.22"]
 }

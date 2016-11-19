@@ -43,7 +43,13 @@ Don't be silly !
 Support for older versions of gnome shell
 -----------
 
-Version 1.3 will be the last version to support gnome shell prior to 3.12 .
+If you use an older version of gnome shell, here are the versions of pixel saver that you should use.
+
+| Gnome Shell | Latest version of pixel saver supporting it                        |
+|-------------|--------------------------------------------------------------------|
+| 3.12        | [1.3](https://github.com/deadalnix/pixel-saver/releases/tag/1.3)   |
+| 3.14        | [1.5](https://github.com/deadalnix/pixel-saver/releases/tag/1.5)   |
+| 3.15        | [1.10](https://github.com/deadalnix/pixel-saver/releases/tag/1.10) |
 
 Screenshots
 -----------
