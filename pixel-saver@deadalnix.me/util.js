@@ -1,3 +1,4 @@
+const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 
 const MAXIMIZED = Meta.MaximizeFlags.BOTH;

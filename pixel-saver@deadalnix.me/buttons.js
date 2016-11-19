@@ -28,12 +28,19 @@ function createButtons() {
 	// Ensure we do not create buttons twice.
 	destroyButtons();
 	
-	actors = [new St.Bin({ style_class: 'box-bin'}), new St.Bin({ style_class: 'box-bin'})];
-	boxes = [new St.BoxLayout({ style_class: 'button-box' }), new St.BoxLayout({ style_class: 'button-box' })];
+	actors = [
+		new St.Bin({ style_class: 'box-bin'}),
+		new St.Bin({ style_class: 'box-bin'})
+	];
 	
-	for (let i = 0; i < actors.length; ++i) {
-		actors[i].add_actor(boxes[i]);
-	}
+	boxes = [
+		new St.BoxLayout({ style_class: 'button-box' }),
+		new St.BoxLayout({ style_class: 'button-box' })
+	];
+	
+	actors.forEach(function(actor, i) {
+		actor.add_actor(boxes[i]);
+	});
 	
 	let order = new Gio.Settings({schema_id: DCONF_META_PATH}).get_string('button-layout');
 	LOG('Buttons layout : ' + order);
@@ -90,10 +97,10 @@ function createButtons() {
 }
 
 function destroyButtons() {
-	for (let i = 0; i < actors.length; ++i) {
-		actors[i].destroy();
+	actors.forEach(function(actor, i) {
+		actor.destroy();
 		boxes[i].destroy();
-	}
+	});
 	
 	actors = [];
 	boxes = [];
@@ -174,9 +181,9 @@ function loadTheme() {
 	St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssFile);
 	
 	// Force style update.
-	for (let i = 0; i < actors.length; ++i) {
-		actors[i].grab_key_focus();
-	}
+	actors.forEach(function(actor) {
+		actor.grab_key_focus();
+	});
 	
 	activeCSS = cssPath;
 }
@@ -205,18 +212,17 @@ function updateVisibility() {
 		}
 	}
 	
-	for (let i = 0; i < actors.length; ++i) {
-		let actor = actors[i];
-		if(!boxes[i].get_children().length) {
-			continue;
+	actors.forEach(function(actor, i) {
+		if (!boxes[i].get_children().length) {
+			return;
 		}
 		
-		if(visible) {
+		if (visible) {
 			actor.show();
 		} else {
 			actor.hide();
 		}
-	}
+	});
 	
 	return false;
 }
