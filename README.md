@@ -9,9 +9,8 @@ The extension has no configuration. Its behavior is made to mimic the one of
 the title bar and settings affecting the title bar should reflect in
 Pixel Saver. It **Just Works** !
 
-For applications using the modern GTK header bar, there are no space savings,
-but the application title is still displayed in the top panel to achieve a
-uniform appearance.
+For applications using the modern GTK header bar there are no space savings, as
+the header bar can contain custom functionality.
 
 <table>
 	<tr>
