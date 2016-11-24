@@ -30,8 +30,7 @@ function updateAppMenu() {
 	
 	let title = win.title;
 	
-	// Not the topmost maximized window.
-	if (win !== Util.getWindow()) {
+	if (!(win.decorated && win.get_maximized())) {
 		let app = Shell.WindowTracker.get_default().get_window_app(win);
 		title = app.get_name();
 	}
