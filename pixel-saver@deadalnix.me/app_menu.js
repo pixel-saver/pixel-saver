@@ -49,6 +49,7 @@ let activeWindow = null;
 let awCallbackID = 0;
 function changeActiveWindow(win) {
 	if (win === activeWindow) {
+		updateAppMenu();
 		return;
 	}
 	
