@@ -127,20 +127,35 @@ const WindowState = {
 }
 
 /**
- * Get the value of _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED before
- * pixel saver did its magic.
- * 
+ * Get the original hide_titlebar_when_maximized state.
+ *
  * @param {Meta.Window} win - the window to check the property
  */
 function getOriginalState(win) {
 	if (win._pixelSaverOriginalState !== undefined) {
 		return win._pixelSaverOriginalState;
 	}
-	
+
 	if (!win.decorated) {
 		return win._pixelSaverOriginalState = WindowState.UNDECORATED;
 	}
-	
+
+	if (win.get_hide_titlebar_when_maximized) {
+		return win.get_hide_titlebar_when_maximized()
+			? WindowState.HIDE_TITLEBAR
+			: WindowState.DEFAULT;
+	} else {
+		return getOriginalStateX11(win);
+	}
+}
+
+/**
+ * Get the value of _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED before
+ * pixel saver did its magic.
+ *
+ * @param {Meta.Window} win - the window to check the property
+ */
+function getOriginalStateX11(win) {
 	let id = guessWindowXID(win);
 	let cmd = 'xprop -id ' + id;
 	LOG(cmd);
@@ -184,34 +199,71 @@ function getOriginalState(win) {
 /**
  * Tells the window manager to hide the titlebar on maximised windows.
  *
+ * @param {Meta.Window} win - window to set the HIDE_TITLEBAR_WHEN_MAXIMIZED property of.
+ * @param {boolean} hide - whether to hide the titlebar or not.
+ */
+function setHideTitlebar(win, hide) {
+	LOG('setHideTitlebar: ' + win.get_title() + ': ' + hide);
+
+	// Make sure we save the state before altering it.
+	getOriginalState(win);
+
+	if (win.set_hide_titlebar_when_maximized) {
+		win.set_hide_titlebar_when_maximized(hide);
+
+		const MAXIMIZED = Meta.MaximizeFlags.BOTH;
+		let flags = win.get_maximized();
+		if (flags == MAXIMIZED) {
+			win.unmaximize(MAXIMIZED);
+			win.maximize(MAXIMIZED);
+		}
+	} else {
+		let retry = 3;
+		Mainloop.idle_add(function () {
+			let id = guessWindowXID(win);
+			if (!id) {
+				if (--retry) {
+					return true;
+				}
+
+				WARN("Finding XID for window %s failed".format(win.title));
+				return false;
+			}
+
+			LOG('onWindowAdded: ' + win.get_title());
+			setHideTitlebarX11(win, hide, id);
+			return false;
+		});
+	}
+}
+
+/**
+ * Tells the window manager to hide the titlebar on maximised windows in X11.
+ *
  * Does this by setting the _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED hint - means
  * I can do it once and forget about it, rather than tracking maximize/unmaximize
  * events.
  *
  * **Caveat**: doesn't work with Ubuntu's Ambiance and Radiance window themes -
  * my guess is they don't respect or implement this property.
- * 
+ *
  * I don't know how to read the initial value, so I'm not sure how to resore it.
  *
  * @param {Meta.Window} win - window to set the HIDE_TITLEBAR_WHEN_MAXIMIZED property of.
  * @param {boolean} hide - whether to hide the titlebar or not.
+ * @param {int} the id of the window.
  */
-function setHideTitlebar(win, hide) {
-	LOG('setHideTitlebar: ' + win.get_title() + ': ' + hide);
-	
-	// Make sure we save the state before altering it.
-	getOriginalState(win);
-	
+function setHideTitlebarX11(win, hide, id) {
 	/**
 	 * Undecorate with xprop. Use _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED.
 	 * See (eg) mutter/src/window-props.c
 	 */
-	let cmd = ['xprop', '-id', guessWindowXID(win),
+	let cmd = ['xprop', '-id', id,
 	           '-f', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED', '32c',
 	           '-set', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED',
 	           (hide ? '0x1' : '0x0')];
 	LOG(cmd.join(' '));
-	
+
 	// Run xprop
 	[success, pid] = GLib.spawn_async(
 		null,
@@ -219,7 +271,7 @@ function setHideTitlebar(win, hide) {
 		null,
 		GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD,
 		null);
-	
+
 	// After xprop completes, unmaximize and remaximize any window
 	// that is already maximized. It seems that setting the xprop on
 	// a window that is already maximized doesn't actually take
@@ -280,24 +332,9 @@ function onWindowAdded(ws, win, retry) {
 		});
 		return false;
 	}
-	
-	retry = 3;
-	Mainloop.idle_add(function () {
-		let id = guessWindowXID(win);
-		if (!id) {
-			if (--retry) {
-				return true;
-			}
-			
-			WARN("Finding XID for window %s failed".format(win.title));
-			return false;
-		}
-		
-		LOG('onWindowAdded: ' + win.get_title());
-		setHideTitlebar(win, true);
-		return false;
-	});
-	
+
+	setHideTitlebar(win, true);
+
 	return false;
 }
 
