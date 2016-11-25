@@ -79,16 +79,23 @@ function createButtons() {
 			button.connect('button-release-event', leftclick(callbacks[order[i]]));
 			box.add(button);
 		}
+		
+		if (!box.get_children().length) {
+			boxes[bi].destroy();
+			boxes[bi] = null;
+			actors[bi].destroy();
+			actors[bi] = null;
+		}
 	}
 	
 	Mainloop.idle_add(function () {
-		let buttonContainer = Main.panel.statusArea.appMenu._label.get_parent();
-		// 1 for activity button and -1 for the menu
-		if (boxes[0].get_children().length) {
+		let buttonContainer = Main.panel.statusArea.appMenu._container;
+		
+		if (actors[0]) {
 			buttonContainer.insert_child_at_index(actors[0], 0);
 		}
 		
-		if (boxes[1].get_children().length) {
+		if (actors[1]) {
 			buttonContainer.insert_child_at_index(actors[1], buttonContainer.get_children().length - 1);
 		}
 		
@@ -98,8 +105,10 @@ function createButtons() {
 
 function destroyButtons() {
 	actors.forEach(function(actor, i) {
-		actor.destroy();
-		boxes[i].destroy();
+		if (actor) {
+			actor.destroy();
+			boxes[i].destroy();
+		}
 	});
 	
 	actors = [];
@@ -199,6 +208,33 @@ function unloadTheme() {
 }
 
 /**
+ * callbacks
+ */
+function updateVisibility() {
+	let win = global.display.focus_window
+	if (!win) {
+		return false;
+	}
+	
+	// Only show buttons when focused window title is shown in AppMenu (see app_menu.js)
+	let visible = win.decorated && win.get_maximized();
+	
+	actors.forEach(function(actor, i) {
+		if (!actor) {
+			return;
+		}
+		
+		if (visible) {
+			actor.show();
+		} else {
+			actor.hide();
+		}
+	});
+	
+	return false;
+}
+
+/**
  * Subextension hooks
  */
 let extensionPath;
@@ -206,16 +242,30 @@ function init(extensionMeta) {
 	extensionPath = extensionMeta.path;
 }
 
+let wmCallbackIDs = [];
 let themeCallbackID = 0;
+let focusCallbackID = 0;
 
 function enable() {
 	loadTheme();
 	createButtons();
 
+	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
+	
+	focusCallbackID = global.display.connect('notify::focus-window', updateVisibility);
+	
 	themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
 }
 
 function disable() {
+	wmCallbackIDs.forEach(function(id) {
+		global.window_manager.disconnect(id);
+	});
+	wmCallbackIDs = [];
+	
+	global.display.disconnect(focusCallbackID);
+	focusCallbackID = 0;
+	
 	if (themeCallbackID !== 0) {
 		Gtk.Settings.get_default().disconnect(0);
 		themeCallbackID = 0;
