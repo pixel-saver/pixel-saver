@@ -87,8 +87,9 @@ function createButtons() {
 			actors[bi] = null;
 		}
 	}
-	
-	Mainloop.idle_add(function () {
+
+	// Add buttons after 1 second timeout to make sure that appMenu is ready
+	Mainloop.timeout_add_seconds(1, function () {
 		let buttonContainer = Main.panel.statusArea.appMenu._container;
 		
 		if (actors[0]) {
