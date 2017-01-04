@@ -29,8 +29,8 @@ function createButtons() {
 	destroyButtons();
 	
 	actors = [
-		new St.Bin({ style_class: 'box-bin'}),
-		new St.Bin({ style_class: 'box-bin'})
+		new St.Bin({ style_class: 'box-bin' }),
+		new St.Bin({ style_class: 'box-bin' })
 	];
 	
 	boxes = [
@@ -58,7 +58,7 @@ function createButtons() {
 	
 	for (let bi = 0; bi < boxes.length; ++bi) {
 		let order = orders[bi],
-			box = boxes[bi];
+		    box = boxes[bi];
 		
 		for (let i = 0; i < order.length; ++i) {
 			if (!order[i]) {
@@ -70,16 +70,17 @@ function createButtons() {
 				WARN("\'%s\' is not a valid button.".format(order[i]));
 				continue;
 			}
-			
-			let button = new St.Button({
-				style_class: order[i]  + ' window-button',
+
+			let icon = new St.Icon({
+				style_class: order[i] + ' window-button',
+				reactive: true,
 				track_hover: true
 			});
-			
-			button.connect('button-release-event', leftclick(callbacks[order[i]]));
-			box.add(button);
+			icon.connect('button-release-event', leftclick(callbacks[order[i]]));
+
+			box.add(icon);
 		}
-		
+
 		if (!box.get_children().length) {
 			boxes[bi].destroy();
 			boxes[bi] = null;
@@ -89,15 +90,15 @@ function createButtons() {
 	}
 
 	// Add buttons after 1 second timeout to make sure that appMenu is ready
-	Mainloop.timeout_add_seconds(1, function () {
-		let buttonContainer = Main.panel.statusArea.appMenu._container;
+	Mainloop.idle_add(function () {
+		let appMenu = Main.panel.statusArea.appMenu.actor.get_parent();
 		
 		if (actors[0]) {
-			buttonContainer.insert_child_at_index(actors[0], 0);
+			Main.panel._leftBox.insert_child_below(actors[0], appMenu);
 		}
 		
 		if (actors[1]) {
-			buttonContainer.insert_child_at_index(actors[1], buttonContainer.get_children().length - 1);
+			Main.panel._leftBox.insert_child_above(actors[1], appMenu);
 		}
 		
 		return false;
