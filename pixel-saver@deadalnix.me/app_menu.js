@@ -144,7 +144,7 @@ function onAppMenuHover(actor) {
 			[bx, by] = label.get_transformed_position();
 			[w, h] = label.get_transformed_size();
 			
-			let y = by + h + 5;
+			let y = by + h + 10;
 			let x = bx - Math.round((tooltip.get_width() - w)/2);
 			tooltip.opacity = 0;
 			tooltip.set_position(x, y);
