@@ -29,7 +29,7 @@ function updateAppMenu() {
 	}
 	
 	let title = win.title;
-	
+
 	if (!(win.decorated && win.get_maximized())) {
 		let app = Shell.WindowTracker.get_default().get_window_app(win);
 		title = app.get_name();
@@ -113,6 +113,16 @@ function onAppMenuHover(actor) {
 	showTooltip = hover;
 	
 	if (showTooltip) {
+		resetMenuCallback();
+		menuCallbackID = appMenu.menu.connect('open-state-changed', function(menu, open) {
+			if (!open) {
+				return;
+			}
+
+			Main.uiGroup.remove_actor(tooltip);
+			tooltipDelayCallbackID = 0;
+		});
+
 		tooltipDelayCallbackID = Mainloop.timeout_add(SHOW_DELAY, function() {
 			if (!showTooltip) {
 				WARN('showTooltip is false and delay callback ran.');
@@ -131,15 +141,6 @@ function onAppMenuHover(actor) {
 			}
 			
 			Main.uiGroup.add_actor(tooltip);
-			
-			resetMenuCallback();
-			menuCallbackID = appMenu.menu.connect('open-state-changed', function(menu, open) {
-				if (open) {
-					Main.uiGroup.remove_actor(tooltip);
-				} else {
-					Main.uiGroup.add_actor(tooltip);
-				}
-			});
 			
 			[bx, by] = label.get_transformed_position();
 			[w, h] = label.get_transformed_size();
@@ -160,23 +161,24 @@ function onAppMenuHover(actor) {
 			
 			return false;
 		});
-	} else if (tooltipDelayCallbackID > 0) {
-		// If the event ran, then we hide.
-		LOG('hide title tooltip');
-		
+	} else {
 		resetMenuCallback();
+		if (tooltipDelayCallbackID > 0) {
+			// If the event ran, then we hide.
+			LOG('hide title tooltip');
 		
-		Tweener.removeTweens(tooltip);
-		Tweener.addTween(tooltip, {
-			opacity: 0,
-			time: HIDE_DURATION,
-			transition: 'easeOutQuad',
-			onComplete: function() {
-				Main.uiGroup.remove_actor(tooltip);
-			}
-		});
+			Tweener.removeTweens(tooltip);
+			Tweener.addTween(tooltip, {
+				opacity: 0,
+				time: HIDE_DURATION,
+				transition: 'easeOutQuad',
+				onComplete: function() {
+					Main.uiGroup.remove_actor(tooltip);
+				}
+			});
 		
-		tooltipDelayCallbackID = 0;
+			tooltipDelayCallbackID = 0;
+		}
 	}
 	
 	return false;
