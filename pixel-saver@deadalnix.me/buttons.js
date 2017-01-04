@@ -89,7 +89,6 @@ function createButtons() {
 		}
 	}
 
-	// Add buttons after 1 second timeout to make sure that appMenu is ready
 	Mainloop.idle_add(function () {
 		let appMenu = Main.panel.statusArea.appMenu.actor.get_parent();
 		
