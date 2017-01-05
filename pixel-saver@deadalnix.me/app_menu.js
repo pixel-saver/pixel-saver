@@ -141,10 +141,11 @@ function onAppMenuHover(actor) {
 				}
 			});
 			
+			[px, py] = Main.panel.actor.get_transformed_position();
 			[bx, by] = label.get_transformed_position();
 			[w, h] = label.get_transformed_size();
 			
-			let y = by + h + 10;
+			let y = py + Main.panel.actor.get_height() + 3;
 			let x = bx - Math.round((tooltip.get_width() - w)/2);
 			tooltip.opacity = 0;
 			tooltip.set_position(x, y);
