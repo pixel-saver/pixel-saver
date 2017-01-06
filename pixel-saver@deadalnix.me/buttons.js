@@ -76,6 +76,7 @@ function createButtons() {
 				reactive: true,
 				track_hover: true
 			});
+			icon.connect('button-press-event', function() { return true; });
 			icon.connect('button-release-event', leftclick(callbacks[order[i]]));
 
 			box.add(icon);
@@ -90,14 +91,14 @@ function createButtons() {
 	}
 
 	Mainloop.idle_add(function () {
-		let appMenu = Main.panel.statusArea.appMenu.actor.get_parent();
+		let buttonContainer = Main.panel.statusArea.appMenu._container;
 		
 		if (actors[0]) {
-			Main.panel._leftBox.insert_child_below(actors[0], appMenu);
+			buttonContainer.insert_child_at_index(actors[0], 0);
 		}
 		
 		if (actors[1]) {
-			Main.panel._leftBox.insert_child_above(actors[1], appMenu);
+			buttonContainer.insert_child_at_index(actors[1], buttonContainer.get_children().length - 1);
 		}
 		
 		return false;
