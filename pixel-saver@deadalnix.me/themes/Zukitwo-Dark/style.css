@@ -1,12 +1,13 @@
 .box-bin { }
 
 .button-box {
-    spacing: 2px;
+    spacing: 8px;
+    margin-left: 4px;
 }
 
 .window-button {
-    width: 24px;
-    height: 24px;
+    width: 16px;
+    height: 16px;
     
     transition-duration: 100;
 }

@@ -10,12 +10,13 @@
 
 .button-box {
 	spacing: 8px;
+	margin-left: 4px;
 }
 
 /* The style for each individual window button */
 .window-button {
-	width: 24px;
-	height: 20px;
+	width: 16px;
+	height: 16px;
 }
 
 /* The style for the window button when hovered over */

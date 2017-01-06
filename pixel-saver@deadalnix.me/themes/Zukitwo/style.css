@@ -1,9 +1,9 @@
 .button-box {
-    spacing: 10px;
+    spacing: 8px;
+    margin-left: 4px;
 }
 
 .window-button {
-
     width: 12px;
     height: 12px;
     
