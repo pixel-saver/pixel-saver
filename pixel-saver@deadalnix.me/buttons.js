@@ -90,7 +90,7 @@ function createButtons() {
 		}
 	}
 
-	Mainloop.idle_add(function () {
+	Mainloop.timeout_add_seconds(1, function () {
 		let buttonContainer = Main.panel.statusArea.appMenu._container;
 		
 		if (actors[0]) {
