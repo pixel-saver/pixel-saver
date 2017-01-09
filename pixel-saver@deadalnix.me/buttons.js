@@ -23,6 +23,7 @@ function WARN(message) {
  */
 const DCONF_META_PATH = 'org.gnome.desktop.wm.preferences';
 
+let initialized = false;
 let actors = [], boxes = [];
 function createButtons() {
 	// Ensure we do not create buttons twice.
@@ -89,20 +90,6 @@ function createButtons() {
 			actors[bi] = null;
 		}
 	}
-
-	Mainloop.timeout_add_seconds(1, function () {
-		let buttonContainer = Main.panel.statusArea.appMenu._container;
-		
-		if (actors[0]) {
-			buttonContainer.insert_child_at_index(actors[0], 0);
-		}
-		
-		if (actors[1]) {
-			buttonContainer.insert_child_at_index(actors[1], buttonContainer.get_children().length - 1);
-		}
-		
-		return false;
-	});
 }
 
 function destroyButtons() {
@@ -216,6 +203,24 @@ function updateVisibility() {
 	let win = global.display.focus_window
 	if (!win) {
 		return false;
+	}
+
+	if (!initialized) {
+		Mainloop.idle_add(function () {
+			let buttonContainer = Main.panel.statusArea.appMenu._container;
+
+			if (actors[0]) {
+				buttonContainer.insert_child_at_index(actors[0], 0);
+			}
+
+			if (actors[1]) {
+				buttonContainer.insert_child_at_index(actors[1], buttonContainer.get_children().length - 1);
+			}
+
+			return false;
+		});
+
+		initialized = true;
 	}
 	
 	// Only show buttons when focused window title is shown in AppMenu (see app_menu.js)
