@@ -23,14 +23,15 @@ function WARN(message) {
  */
 const DCONF_META_PATH = 'org.gnome.desktop.wm.preferences';
 
+let initialized = false;
 let actors = [], boxes = [];
 function createButtons() {
 	// Ensure we do not create buttons twice.
 	destroyButtons();
 	
 	actors = [
-		new St.Bin({ style_class: 'box-bin'}),
-		new St.Bin({ style_class: 'box-bin'})
+		new St.Bin({ style_class: 'box-bin' }),
+		new St.Bin({ style_class: 'box-bin' })
 	];
 	
 	boxes = [
@@ -58,7 +59,7 @@ function createButtons() {
 	
 	for (let bi = 0; bi < boxes.length; ++bi) {
 		let order = orders[bi],
-			box = boxes[bi];
+		    box = boxes[bi];
 		
 		for (let i = 0; i < order.length; ++i) {
 			if (!order[i]) {
@@ -70,36 +71,33 @@ function createButtons() {
 				WARN("\'%s\' is not a valid button.".format(order[i]));
 				continue;
 			}
-			
-			let button = new St.Button({
-				style_class: order[i]  + ' window-button',
+
+			let icon = new St.Icon({
+				style_class: order[i] + ' window-button',
+				reactive: true,
 				track_hover: true
 			});
-			
-			button.connect('button-release-event', leftclick(callbacks[order[i]]));
-			box.add(button);
+			icon.connect('button-press-event', function() { return true; });
+			icon.connect('button-release-event', leftclick(callbacks[order[i]]));
+
+			box.add(icon);
+		}
+
+		if (!box.get_children().length) {
+			boxes[bi].destroy();
+			boxes[bi] = null;
+			actors[bi].destroy();
+			actors[bi] = null;
 		}
 	}
-	
-	Mainloop.idle_add(function () {
-		// 1 for activity button and -1 for the menu
-		if (boxes[0].get_children().length) {
-			Main.panel._leftBox.insert_child_at_index(actors[0], 1);
-		}
-		
-		if (boxes[1].get_children().length) {
-			Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
-		}
-		
-		updateVisibility();
-		return false;
-	});
 }
 
 function destroyButtons() {
 	actors.forEach(function(actor, i) {
-		actor.destroy();
-		boxes[i].destroy();
+		if (actor) {
+			actor.destroy();
+			boxes[i].destroy();
+		}
 	});
 	
 	actors = [];
@@ -120,7 +118,7 @@ function leftclick(callback) {
 }
 
 function minimize() {
-	let win = Util.getWindow();
+	let win = global.display.focus_window;
 	if (!win || win.minimized) {
 		WARN('impossible to minimize');
 		return;
@@ -130,7 +128,7 @@ function minimize() {
 }
 
 function maximize() {
-	let win = Util.getWindow();
+	let win = global.display.focus_window;
 	if (!win) {
 		WARN('impossible to maximize');
 		return;
@@ -148,7 +146,7 @@ function maximize() {
 }
 
 function close() {
-	let win = Util.getWindow();
+	let win = global.display.focus_window;
 	if (!win) {
 		WARN('impossible to close');
 		return;
@@ -202,18 +200,34 @@ function unloadTheme() {
  * callbacks
  */
 function updateVisibility() {
-	// If we have a window to control, then we show the buttons.
-	let visible = !Main.overview.visible;
-	if (visible) {
-		visible = false;
-		let win = Util.getWindow();
-		if (win) {
-			visible = win.decorated;
-		}
+	let win = global.display.focus_window
+	if (!win) {
+		return false;
+	}
+
+	if (!initialized) {
+		Mainloop.idle_add(function () {
+			let buttonContainer = Main.panel.statusArea.appMenu._container;
+
+			if (actors[0]) {
+				buttonContainer.insert_child_at_index(actors[0], 0);
+			}
+
+			if (actors[1]) {
+				buttonContainer.insert_child_at_index(actors[1], buttonContainer.get_children().length - 1);
+			}
+
+			return false;
+		});
+
+		initialized = true;
 	}
 	
+	// Only show buttons when focused window title is shown in AppMenu (see app_menu.js)
+	let visible = win.decorated && win.get_maximized();
+	
 	actors.forEach(function(actor, i) {
-		if (!boxes[i].get_children().length) {
+		if (!actor) {
 			return;
 		}
 		
@@ -236,23 +250,16 @@ function init(extensionMeta) {
 }
 
 let wmCallbackIDs = [];
-let overviewCallbackIDs = [];
 let themeCallbackID = 0;
+let focusCallbackID = 0;
 
 function enable() {
 	loadTheme();
 	createButtons();
-	
-	overviewCallbackIDs.push(Main.overview.connect('showing', updateVisibility));
-	overviewCallbackIDs.push(Main.overview.connect('hidden', updateVisibility));
-	
-	let wm = global.window_manager;
-	wmCallbackIDs.push(wm.connect('switch-workspace', updateVisibility));
-	wmCallbackIDs.push(wm.connect('map', updateVisibility));
-	wmCallbackIDs.push(wm.connect('minimize', updateVisibility));
-	wmCallbackIDs.push(wm.connect('unminimize', updateVisibility));
-	
+
 	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
+	
+	focusCallbackID = global.display.connect('notify::focus-window', updateVisibility);
 	
 	themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
 }
@@ -261,13 +268,10 @@ function disable() {
 	wmCallbackIDs.forEach(function(id) {
 		global.window_manager.disconnect(id);
 	});
-	
-	overviewCallbackIDs.forEach(function(id) {
-		Main.overview.disconnect(id);
-	});
-	
 	wmCallbackIDs = [];
-	overviewCallbackIDs = [];
+	
+	global.display.disconnect(focusCallbackID);
+	focusCallbackID = 0;
 	
 	if (themeCallbackID !== 0) {
 		Gtk.Settings.get_default().disconnect(0);
@@ -276,5 +280,7 @@ function disable() {
 	
 	destroyButtons();
 	unloadTheme();
+
+	initialized = false;
 }
 
