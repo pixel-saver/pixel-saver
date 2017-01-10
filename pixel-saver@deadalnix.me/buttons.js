@@ -280,5 +280,7 @@ function disable() {
 	
 	destroyButtons();
 	unloadTheme();
+
+	initialized = false;
 }
 
