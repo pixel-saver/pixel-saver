@@ -36,7 +36,11 @@ function updateAppMenu() {
 	}
 	
 	LOG('Override title ' + title);
-	appMenu._label.set_text(title);
+	if (imports.misc.extensionUtils.versionCheck(['3.14'], imports.misc.config.PACKAGE_VERSION)) {
+		appMenu._label.setText(title);
+	} else {
+		appMenu._label.set_text(title);
+	}
 	tooltip.text = title;
 	
 	return false;

@@ -175,9 +175,13 @@ function loadTheme() {
 	unloadTheme();
 	
 	// Load the new style
-	let cssFile = Gio.file_new_for_path(cssPath);
-	St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssFile);
-	
+	if (imports.misc.extensionUtils.versionCheck(['3.14'], imports.misc.config.PACKAGE_VERSION)) {
+		St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssPath);
+	} else {
+		let cssFile = Gio.file_new_for_path(cssPath);
+		St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssFile);
+	}
+
 	// Force style update.
 	actors.forEach(function(actor) {
 		actor.grab_key_focus();
@@ -189,9 +193,14 @@ function loadTheme() {
 function unloadTheme() {
 	if (activeCSS) {
 		LOG('Unload ' + activeCSS);
-		
-		let cssFile = Gio.file_new_for_path(activeCSS);
-		St.ThemeContext.get_for_stage(global.stage).get_theme().unload_stylesheet(cssFile);
+
+		if (imports.misc.extensionUtils.versionCheck(['3.14'], imports.misc.config.PACKAGE_VERSION)) {
+			St.ThemeContext.get_for_stage(global.stage).get_theme().unload_stylesheet(activeCSS);
+		} else {
+			let cssFile = Gio.file_new_for_path(activeCSS);
+			St.ThemeContext.get_for_stage(global.stage).get_theme().unload_stylesheet(cssFile);
+		}
+
 		activeCSS = false;
 	}
 }
