@@ -1,4 +1,5 @@
 const GLib = imports.gi.GLib;
+const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 const Util = imports.misc.util;
@@ -290,7 +291,8 @@ function onWindowAdded(ws, win, retry) {
 		}
 		
 		LOG('onWindowAdded: ' + win.get_title());
-		setHideTitlebar(win, true);
+		if (win.is_on_primary_monitor())
+			setHideTitlebar(win, true);
 		return false;
 	});
 	
@@ -344,15 +346,22 @@ function forEachWindow(callback) {
 		.forEach(callback);
 }
 
+function windowEnteredMonitor(metaScreen, monitorIndex, metaWin) {
+	let hide = monitorIndex == Main.layoutManager.primaryIndex;
+	setHideTitlebar(metaWin, hide);
+}
+
 /**
  * Subextension hooks
  */
 function init() {}
 
 let changeWorkspaceID = 0;
+let windowEnteredID = 0;
 function enable() {
 	// Connect events
 	changeWorkspaceID = global.screen.connect('notify::n-workspaces', onChangeNWorkspaces);
+	windowEnteredID   = global.screen.connect('window-entered-monitor', windowEnteredMonitor);
 	
 	/**
 	 * Go through already-maximised windows & undecorate.
@@ -378,6 +387,11 @@ function disable() {
 	if (changeWorkspaceID) {
 		global.screen.disconnect(changeWorkspaceID);
 		changeWorkspaceID = 0;
+	}
+
+	if (windowEnteredID) {
+		global.screen.disconnect(windowEnteredID);
+		windowEnteredID = 0;
 	}
 	
 	cleanWorkspaces();
