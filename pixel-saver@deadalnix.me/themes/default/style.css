@@ -13,13 +13,13 @@
 }
 
 /* The style for each individual window button */
-.window-button {
+.box-bin .window-button {
 	width: 24px;
 	height: 20px;
 }
 
 /* The style for the window button when hovered over */
-.window-button:hover {
+.box-bin .window-button:hover {
 }
 
 /* Here you can style each individual button. You need to define style classes
