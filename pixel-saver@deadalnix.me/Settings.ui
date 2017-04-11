@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+<interface domain="pixel-saver">
+
+<object class="GtkAdjustment" id="Adjust_interval">
+  <property name="lower">1</property>
+  <property name="upper">100</property>
+  <property name="step_increment">1</property>
+</object>
+
+<object class="GtkNotebook" id="prefs_widget">
+  <property name="expand">true</property>
+
+  <child>
+    <object class="GtkBox" id="basic_settings_box">
+      <property name="margin_left">12</property>
+      <property name="margin_right">12</property>
+      <property name="margin_top">12</property>
+      <property name="margin_bottom">12</property>
+      <property name="orientation">vertical</property>
+      <property name="spacing">12</property>
+      <child>
+        <object class="GtkFrame" id="only_main_monitor_frame">
+          <property name="label_xalign">0</property>
+          <property name="shadow_type">in</property>
+          <child>
+            <object class="GtkListBox" id="only_main_monitor_listbox">
+              <property name="selection_mode">none</property>
+              <child>
+                <object class="GtkListBoxRow" id="only_main_monitor_listboxrow">
+                  <child>
+                    <object class="GtkGrid" id="only_main_monitor_grid">
+                      <property name="margin_left">12</property>
+                      <property name="margin_right">12</property>
+                      <property name="margin_top">12</property>
+                      <property name="margin_bottom">12</property>
+                      <property name="column_spacing">12</property>
+                      <child>
+                        <object class="GtkLabel" id="only_main_monitor_label">
+                          <property name="hexpand">True</property>
+                          <property name="xalign">0</property>
+                          <property name="label" translatable="yes">Remove title bars only on the main monitor</property>
+                          <property name="wrap">True</property>
+                        </object>
+                        <packing>
+                          <property name="left_attach">0</property>
+                          <property name="top_attach">1</property>
+                        </packing>
+                      </child>
+                      <child>
+                        <object class="GtkSwitch" id="only_main_monitor_switch">
+                          <property name="halign">end</property>
+                          <property name="valign">center</property>
+                        </object>
+                        <packing>
+                          <property name="left_attach">1</property>
+                          <property name="top_attach">0</property>
+                          <property name="height">2</property>
+                        </packing>
+                      </child>
+                    </object>
+                  </child>
+                </object>
+              </child>
+            </object>
+          </child>
+        </object>
+        <packing>
+          <property name="expand">False</property>
+          <property name="fill">True</property>
+          <property name="position">1</property>
+        </packing>
+      </child>
+    </object>
+  </child>
+
+  <child type="tab">
+    <object class="GtkLabel" id="basic_settings_label">
+      <property name="label" translatable="yes">Basic settings</property>
+    </object>
+    <packing>
+      <property name="position">0</property>
+      <property name="tab_fill">False</property>
+    </packing>
+  </child>
+
+  <child>
+    <object class="GtkBox" id="about">
+      <property name="margin_top">12</property>
+      <property name="margin_bottom">12</property>
+      <property name="hexpand">True</property>
+      <property name="vexpand">True</property>
+      <property name="orientation">vertical</property>
+      <property name="spacing">5</property>
+      <child>
+        <object class="GtkLabel" id="extension_name">
+          <property name="label">&lt;b&gt;Pixel Saver&lt;/b&gt;</property>
+          <property name="use_markup">True</property>
+        </object>
+        <packing>
+          <property name="expand">False</property>
+          <property name="fill">True</property>
+          <property name="position">0</property>
+        </packing>
+      </child>
+      <child>
+        <object class="GtkLabel" id="extension_description">
+          <property name="label" translatable="yes"></property>
+          <property name="justify">center</property>
+          <property name="wrap">True</property>
+        </object>
+        <packing>
+          <property name="expand">False</property>
+          <property name="fill">True</property>
+          <property name="position">3</property>
+        </packing>
+      </child>
+      <child>
+        <object class="GtkBox" id="maintainer_box">
+          <property name="halign">center</property>
+          <property name="spacing">5</property>
+          <child>
+            <object class="GtkLabel" id="maintainer_label">
+              <property name="label" translatable="yes">Maintained by</property>
+            </object>
+            <packing>
+              <property name="expand">False</property>
+              <property name="fill">True</property>
+              <property name="position">0</property>
+            </packing>
+          </child>
+          <child>
+            <object class="GtkLabel" id="email_label">
+              <property name="label">Deadalnix (&lt;a href="mailto:deadalnix@gmail.com"&gt;deadalnix@gmail.com&lt;/a&gt;)</property>
+              <property name="use_markup">True</property>
+            </object>
+            <packing>
+              <property name="expand">False</property>
+              <property name="fill">True</property>
+              <property name="position">1</property>
+            </packing>
+          </child>
+        </object>
+        <packing>
+          <property name="expand">False</property>
+          <property name="fill">True</property>
+          <property name="position">4</property>
+        </packing>
+      </child>
+      <child>
+        <object class="GtkLinkButton" id="homepage_link">
+          <property name="label" translatable="yes">Webpage</property>
+          <property name="receives_default">True</property>
+          <property name="events"/>
+          <property name="halign">center</property>
+          <property name="relief">none</property>
+          <property name="uri">https://github.com/deadalnix/pixel-saver</property>
+        </object>
+        <packing>
+          <property name="expand">False</property>
+          <property name="fill">True</property>
+          <property name="position">5</property>
+        </packing>
+      </child>
+      <child>
+        <object class="GtkLabel" id="GNU_label">
+          <property name="valign">end</property>
+          <property name="label" translatable="yes">&lt;span size="small"&gt;This program comes with ABSOLUTELY NO WARRANTY.
+See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GNU General Public License, version 2 or later&lt;/a&gt; for details.&lt;/span&gt;</property>
+          <property name="use_markup">True</property>
+          <property name="justify">center</property>
+          <property name="wrap">True</property>
+        </object>
+        <packing>
+          <property name="expand">True</property>
+          <property name="fill">True</property>
+          <property name="position">6</property>
+        </packing>
+      </child>
+    </object>
+    <packing>
+      <property name="position">3</property>
+    </packing>
+  </child>
+
+  <child type="tab">
+    <object class="GtkLabel" id="about_label">
+      <property name="label" translatable="yes">About</property>
+    </object>
+      <packing>
+        <property name="position">1</property>
+        <property name="tab_fill">False</property>
+      </packing>
+  </child>
+</object>
+
+</interface>
