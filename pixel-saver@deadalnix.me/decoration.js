@@ -3,6 +3,8 @@ const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 const Util = imports.misc.util;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
 
 function LOG(message) {
 	// log("[pixel-saver]: " + message);
@@ -291,8 +293,10 @@ function onWindowAdded(ws, win, retry) {
 		}
 		
 		LOG('onWindowAdded: ' + win.get_title());
-		if (win.is_on_primary_monitor())
-			setHideTitlebar(win, true);
+		let hide = true;
+		if (settings.get_boolean('only-main-monitor'))
+			hide = win.is_on_primary_monitor();
+		setHideTitlebar(win, hide);
 		return false;
 	});
 	
@@ -347,7 +351,9 @@ function forEachWindow(callback) {
 }
 
 function windowEnteredMonitor(metaScreen, monitorIndex, metaWin) {
-	let hide = monitorIndex == Main.layoutManager.primaryIndex;
+	let hide = true;
+	if (settings.get_boolean('only-main-monitor'))
+		hide = monitorIndex == Main.layoutManager.primaryIndex;
 	setHideTitlebar(metaWin, hide);
 }
 
@@ -358,7 +364,12 @@ function init() {}
 
 let changeWorkspaceID = 0;
 let windowEnteredID = 0;
+let settings = null;
+
 function enable() {
+	// Load settings
+	settings = Convenience.getSettings();
+
 	// Connect events
 	changeWorkspaceID = global.screen.connect('notify::n-workspaces', onChangeNWorkspaces);
 	windowEnteredID   = global.screen.connect('window-entered-monitor', windowEnteredMonitor);
@@ -405,5 +416,8 @@ function disable() {
 		
 		delete win._pixelSaverOriginalState;
 	});
+
+	settings.run_dispose();
+	settings = null;
 }
 
