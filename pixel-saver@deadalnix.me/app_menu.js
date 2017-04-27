@@ -29,15 +29,18 @@ function updateAppMenu() {
 	}
 	
 	let title = win.title;
-	
-	// Not the topmost maximized window.
-	if (win !== Util.getWindow()) {
+
+	if (!(win.decorated && win.get_maximized())) {
 		let app = Shell.WindowTracker.get_default().get_window_app(win);
 		title = app.get_name();
 	}
 	
 	LOG('Override title ' + title);
-	appMenu._label.set_text(title);
+	if (imports.misc.extensionUtils.versionCheck(['3.14'], imports.misc.config.PACKAGE_VERSION)) {
+		appMenu._label.setText(title);
+	} else {
+		appMenu._label.set_text(title);
+	}
 	tooltip.text = title;
 	
 	return false;
@@ -50,6 +53,7 @@ let activeWindow = null;
 let awCallbackID = 0;
 function changeActiveWindow(win) {
 	if (win === activeWindow) {
+		updateAppMenu();
 		return;
 	}
 	
@@ -113,6 +117,16 @@ function onAppMenuHover(actor) {
 	showTooltip = hover;
 	
 	if (showTooltip) {
+		resetMenuCallback();
+		menuCallbackID = appMenu.menu.connect('open-state-changed', function(menu, open) {
+			if (!open) {
+				return;
+			}
+
+			Main.uiGroup.remove_actor(tooltip);
+			tooltipDelayCallbackID = 0;
+		});
+
 		tooltipDelayCallbackID = Mainloop.timeout_add(SHOW_DELAY, function() {
 			if (!showTooltip) {
 				WARN('showTooltip is false and delay callback ran.');
@@ -124,22 +138,13 @@ function onAppMenuHover(actor) {
 			}
 			
 			let label = appMenu._label;
-			if (!label.get_clutter_text().get_layout().is_ellipsized()) {
+			if (label == null || !label.get_clutter_text().get_layout().is_ellipsized()) {
 				// Do not need to hide.
 				tooltipDelayCallbackID = 0;
 				return false;
 			}
 			
 			Main.uiGroup.add_actor(tooltip);
-			
-			resetMenuCallback();
-			menuCallbackID = appMenu.menu.connect('open-state-changed', function(menu, open) {
-				if (open) {
-					Main.uiGroup.remove_actor(tooltip);
-				} else {
-					Main.uiGroup.add_actor(tooltip);
-				}
-			});
 			
 			[px, py] = Main.panel.actor.get_transformed_position();
 			[bx, by] = label.get_transformed_position();
@@ -161,23 +166,24 @@ function onAppMenuHover(actor) {
 			
 			return false;
 		});
-	} else if (tooltipDelayCallbackID > 0) {
-		// If the event ran, then we hide.
-		LOG('hide title tooltip');
-		
+	} else {
 		resetMenuCallback();
+		if (tooltipDelayCallbackID > 0) {
+			// If the event ran, then we hide.
+			LOG('hide title tooltip');
 		
-		Tweener.removeTweens(tooltip);
-		Tweener.addTween(tooltip, {
-			opacity: 0,
-			time: HIDE_DURATION,
-			transition: 'easeOutQuad',
-			onComplete: function() {
-				Main.uiGroup.remove_actor(tooltip);
-			}
-		});
+			Tweener.removeTweens(tooltip);
+			Tweener.addTween(tooltip, {
+				opacity: 0,
+				time: HIDE_DURATION,
+				transition: 'easeOutQuad',
+				onComplete: function() {
+					Main.uiGroup.remove_actor(tooltip);
+				}
+			});
 		
-		tooltipDelayCallbackID = 0;
+			tooltipDelayCallbackID = 0;
+		}
 	}
 	
 	return false;
