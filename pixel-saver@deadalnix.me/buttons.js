@@ -47,13 +47,11 @@ function createButtons() {
 	
 	let orders = order.replace(/ /g, '').split(':');
 	
-	// Checking the left button orders, make an empty list when it's not exists
-	if(typeof orders[0] != 'undefined') orders[0] = orders[0].split(',');
-	else orders[0] = [];
+	orders[0] = orders[0].split(',');
 	
-	// Checking the right button orders, make an empty list when it's not exists
-	if(typeof orders[1] != 'undefined') orders[1] = orders[1].split(',');
-	else orders[1] = [];
+	// Check if it's actually exists, if not then create it
+	if(typeof orders[1] == 'undefined') orders[1] = '';
+	orders[1] = orders[1].split(',');
 	
 	const callbacks = {
 		minimize : minimize,
