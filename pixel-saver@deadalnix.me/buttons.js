@@ -48,7 +48,11 @@ function createButtons() {
 	let orders = order.replace(/ /g, '').split(':');
 	
 	orders[0] = orders[0].split(',');
-	orders[1] = orders[1].split(',');
+	
+	// Checking the secondary button orders
+	if(typeof orders[1] != 'undefined') orders[1] = orders[1].split(',');
+	// if doesn't exist then use the default orders
+	else orders[1] = orders[0];
 	
 	const callbacks = {
 		minimize : minimize,
