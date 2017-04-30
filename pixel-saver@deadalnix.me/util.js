@@ -2,6 +2,7 @@ const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 
 const MAXIMIZED = Meta.MaximizeFlags.BOTH;
+const VMAXIMIZED = Meta.MaximizeFlags.VERTICAL;
 
 function getWindow() {
 	// get all window in stacking order.
@@ -14,7 +15,7 @@ function getWindow() {
 	let i = windows.length;
 	while (i--) {
 		let window = windows[i];
-		if (window.get_maximized() === MAXIMIZED && !window.minimized) {
+		if (window.get_maximized() === MAXIMIZED || VMAXIMIZED && !window.minimized) {
 			return window;
 		}
 	}
