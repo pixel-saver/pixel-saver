@@ -48,6 +48,9 @@ function createButtons() {
 	let orders = order.replace(/ /g, '').split(':');
 	
 	orders[0] = orders[0].split(',');
+	
+	// Check if it's actually exists, if not then create it
+	if(typeof orders[1] == 'undefined') orders[1] = '';
 	orders[1] = orders[1].split(',');
 	
 	const callbacks = {
