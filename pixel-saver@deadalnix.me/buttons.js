@@ -8,6 +8,7 @@ const St = imports.gi.St;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
 
 function LOG(message) {
@@ -212,6 +213,9 @@ function updateVisibility() {
 		let win = Util.getWindow();
 		if (win) {
 			visible = win.decorated;
+			// If still visible, check if on primary monitor
+			if (visible && settings.get_boolean('only-main-monitor'))
+				visible = win.is_on_primary_monitor();
 		}
 	}
 	
@@ -241,8 +245,12 @@ function init(extensionMeta) {
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
 let themeCallbackID = 0;
+let settings = null;
 
 function enable() {
+	// Load settings
+	settings = Convenience.getSettings();
+	
 	loadTheme();
 	createButtons();
 	
@@ -279,5 +287,8 @@ function disable() {
 	
 	destroyButtons();
 	unloadTheme();
+
+	settings.run_dispose();
+	settings = null;
 }
 
