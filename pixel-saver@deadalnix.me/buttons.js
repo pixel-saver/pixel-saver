@@ -245,6 +245,7 @@ function init(extensionMeta) {
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
 let themeCallbackID = 0;
+let globalCallBackID = 0;
 let settings = null;
 
 function enable() {
@@ -266,6 +267,8 @@ function enable() {
 	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
 	
 	themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
+	
+	globalCallBackID = global.screen.connect('restacked', updateVisibility);
 }
 
 function disable() {
@@ -284,6 +287,9 @@ function disable() {
 		Gtk.Settings.get_default().disconnect(0);
 		themeCallbackID = 0;
 	}
+	
+	global.screen.disconnect(globalCallBackID);
+	globalCallBackID = 0;
 	
 	destroyButtons();
 	unloadTheme();

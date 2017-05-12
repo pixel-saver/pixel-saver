@@ -198,6 +198,7 @@ function init() {}
 let wmCallbackIDs = [];
 let focusCallbackID = 0;
 let tooltipCallbackID = 0;
+let globalCallBackID = 0;
 let settings = null;
 
 function enable() {
@@ -216,6 +217,7 @@ function enable() {
 	
 	focusCallbackID = global.display.connect('notify::focus-window', onFocusChange);
 	tooltipCallbackID = appMenu.actor.connect('notify::hover', onAppMenuHover);
+	globalCallBackID = global.screen.connect('restacked', updateAppMenu);
 }
 
 function disable() {
@@ -227,6 +229,9 @@ function disable() {
 	
 	global.display.disconnect(focusCallbackID);
 	focusCallbackID = 0;
+	
+	global.screen.disconnect(globalCallBackID);
+	globalCallBackID = 0;
 	
 	appMenu.actor.disconnect(tooltipCallbackID);
 	tooltipCallbackID = 0;
