@@ -7,6 +7,7 @@ const Tweener = imports.ui.tweener;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
 
 function LOG(message) {
@@ -32,6 +33,12 @@ function updateAppMenu() {
 	
 	// Not the topmost maximized window.
 	if (win !== Util.getWindow()) {
+		let app = Shell.WindowTracker.get_default().get_window_app(win);
+		title = app.get_name();
+	}
+	
+	// Not on the primary monitor
+	if (settings.get_boolean('only-main-monitor') && !win.is_on_primary_monitor()) {
 		let app = Shell.WindowTracker.get_default().get_window_app(win);
 		title = app.get_name();
 	}
@@ -191,8 +198,13 @@ function init() {}
 let wmCallbackIDs = [];
 let focusCallbackID = 0;
 let tooltipCallbackID = 0;
+let globalCallBackID = 0;
+let settings = null;
 
 function enable() {
+	// Load settings
+	settings = Convenience.getSettings();
+
 	appMenu = Main.panel.statusArea.appMenu;
 	
 	tooltip = new St.Label({
@@ -205,6 +217,7 @@ function enable() {
 	
 	focusCallbackID = global.display.connect('notify::focus-window', onFocusChange);
 	tooltipCallbackID = appMenu.actor.connect('notify::hover', onAppMenuHover);
+	globalCallBackID = global.screen.connect('restacked', updateAppMenu);
 }
 
 function disable() {
@@ -216,6 +229,9 @@ function disable() {
 	
 	global.display.disconnect(focusCallbackID);
 	focusCallbackID = 0;
+	
+	global.screen.disconnect(globalCallBackID);
+	globalCallBackID = 0;
 	
 	appMenu.actor.disconnect(tooltipCallbackID);
 	tooltipCallbackID = 0;
@@ -235,5 +251,8 @@ function disable() {
 	
 	tooltip.destroy();
 	tooltip = null;
+
+	settings.run_dispose();
+	settings = null;
 }
 

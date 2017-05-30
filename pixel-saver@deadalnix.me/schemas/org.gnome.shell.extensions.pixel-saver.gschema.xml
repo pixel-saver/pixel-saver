@@ -1,0 +1,13 @@
+<schemalist gettext-domain="gnome-shell-extensions">
+
+  <schema id="org.gnome.shell.extensions.pixel-saver"
+      path="/org/gnome/shell/extensions/pixel-saver/">
+
+    <key name="only-main-monitor" type="b">
+      <default>true</default>
+        <summary>Only remove the top bar of inwdows in the main monitor.</summary>
+        <description>If windows are on an external monitor, this setting will ensure the top bar stays visible.</description>
+    </key>
+
+  </schema>
+</schemalist>
