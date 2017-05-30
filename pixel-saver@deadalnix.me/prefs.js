@@ -3,7 +3,7 @@ const Gtk = imports.gi.Gtk;
 const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Utils = Me.imports.utils;
+const Convenience = Me.imports.convenience;
 
 const Gettext = imports.gettext.domain('pixel-saver');
 const _ = Gettext.gettext;
@@ -11,8 +11,8 @@ const _ = Gettext.gettext;
 let settings;
 
 function init() {
-	settings = Utils.getSettings(Me);
-	Utils.initTranslations("pixel-saver");
+	settings = Convenience.getSettings(Me);
+	Convenience.initTranslations("pixel-saver");
 }
 
 function buildPrefsWidget(){
