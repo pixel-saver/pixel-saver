@@ -35,7 +35,7 @@ You can also follow these simple instructions for manual installation :
     git clone https://github.com/deadalnix/pixel-saver.git
     cd pixel-saver
     # Get the last released version
-	git checkout 1.9
+	git checkout 1.10
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
     # activate
