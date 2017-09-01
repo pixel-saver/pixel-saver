@@ -187,7 +187,7 @@ function getOriginalState(win) {
  * **Caveat**: doesn't work with Ubuntu's Ambiance and Radiance window themes -
  * my guess is they don't respect or implement this property.
  * 
- * I don't know how to read the inital value, so I'm not sure how to resore it.
+ * I don't know how to read the initial value, so I'm not sure how to resore it.
  *
  * @param {Meta.Window} win - window to set the HIDE_TITLEBAR_WHEN_MAXIMIZED property of.
  * @param {boolean} hide - whether to hide the titlebar or not.
