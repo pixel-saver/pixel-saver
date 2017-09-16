@@ -1,0 +1,52 @@
+.box-bin { }
+
+.button-box {
+    spacing: 1px;
+}
+
+.window-button {
+    width: 19px;
+    height: 19px;
+}
+
+.close {
+    background-image: url("GKWindowButton/GKWindowCloseButton/Default.svg");
+}
+
+.close:hover {
+    background-image: url("GKWindowButton/GKWindowCloseButton/Hover.svg");
+}
+
+.close:active {
+    background-image: url("GKWindowButton/GKWindowCloseButton/Active.svg");
+}
+
+.maximize {
+    background-image: url("GKWindowButton/GKWindowZoomButton/Default.svg");
+}
+
+.maximize:hover {
+    background-image: url("GKWindowButton/GKWindowZoomButton/Hover.svg");
+}
+
+.maximize:active {
+    background-image: url("GKWindowButton/GKWindowZoomButton/Active.svg");
+}
+
+.minimize {
+    background-image: url("GKWindowButton/GKWindowMiniaturizeButton/Default.svg");
+}
+
+.minimize:hover {
+    background-image: url("GKWindowButton/GKWindowMiniaturizeButton/Hover.svg");
+}
+
+.minimize:active {
+    background-image: url("GKWindowButton/GKWindowMiniaturizeButton/Active.svg");
+}
+
+.close:backdrop,
+.minimize:backdrop,
+.maximize:backdrop {
+    background-image: url("GKWindowButton/Backdrop.svg");
+}
