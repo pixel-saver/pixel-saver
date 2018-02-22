@@ -45,6 +45,11 @@ function createButtons() {
 	let order = new Gio.Settings({schema_id: DCONF_META_PATH}).get_string('button-layout');
 	LOG('Buttons layout : ' + order);
 	
+	if (order.indexOf(':') == -1) {
+		LOG('Button layout empty')
+		return
+	}
+	
 	let orders = order.replace(/ /g, '').split(':');
 	
 	orders[0] = orders[0].split(',');
