@@ -30,7 +30,7 @@ Installation
 
 Install it with one click from the [GNOME extension repository](https://extensions.gnome.org/extension/723/pixel-saver/).
 
-You can also follow these simply instruction for manual installation :
+You can also follow these simple instructions for manual installation :
 
     git clone https://github.com/deadalnix/pixel-saver.git
     cd pixel-saver
