@@ -124,7 +124,7 @@ function onAppMenuHover(actor) {
 			}
 			
 			let label = appMenu._label;
-			if (!label.get_clutter_text().get_layout().is_ellipsized()) {
+			if (label == null || !label.get_clutter_text().get_layout().is_ellipsized()) {
 				// Do not need to hide.
 				tooltipDelayCallbackID = 0;
 				return false;
