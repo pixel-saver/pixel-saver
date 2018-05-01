@@ -58,7 +58,7 @@ function createButtons() {
 	if(typeof orders[1] == 'undefined') {
 		orders[1] = '';
 	// If the button layout is explicit defined as empty, do nothing
-	} else if(typeof orders[1] != 'undefined' && orders[1].length == 0) {
+	} else if(orders[1].length == 0) {
 		return;
 	}
 	orders[1] = orders[1].split(',');
