@@ -14,8 +14,10 @@ function getWindow() {
 	let i = windows.length;
 	while (i--) {
 		let window = windows[i];
-		let is_maximized = window.get_maximized() === MAXIMIZED;
+	        let is_maximized = window.get_maximized() === MAXIMIZED;
+	        // half maximized
   	        let is_maxvertical = window.get_maximized() === Meta.MaximizeFlags.VERTICAL;
+	        // window.has_focus() get the focused window
 		if (window.has_focus() && (is_maximized || is_maxvertical)  && !window.minimized) {
 			return window;
 		}
