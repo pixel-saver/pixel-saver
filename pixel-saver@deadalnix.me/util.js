@@ -14,7 +14,9 @@ function getWindow() {
 	let i = windows.length;
 	while (i--) {
 		let window = windows[i];
-		if (window.get_maximized() === MAXIMIZED && !window.minimized) {
+		let is_maximized = window.get_maximized() === MAXIMIZED;
+  	        let is_maxvertical = window.get_maximized() === Meta.MaximizeFlags.VERTICAL;
+		if (window.has_focus() && (is_maximized || is_maxvertical)  && !window.minimized) {
 			return window;
 		}
 	}
