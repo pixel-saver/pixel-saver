@@ -87,27 +87,36 @@ function createButtons() {
 			button.connect('button-release-event', leftclick(callbacks[order[i]]));
 			box.add(button);
 		}
+		
+		if (!box.get_children().length) {
+			boxes[bi].destroy();
+			boxes[bi] = null;
+			actors[bi].destroy();
+			actors[bi] = null;
+		}
 	}
 	
 	Mainloop.idle_add(function () {
-		// 1 for activity button and -1 for the menu
-		if (boxes[0].get_children().length) {
-			Main.panel._leftBox.insert_child_at_index(actors[0], 1);
+		let buttonContainer = Main.panel.statusArea.appMenu._container;
+		
+		if (actors[0]) {
+			buttonContainer.insert_child_at_index(actors[0], 0);
 		}
 		
-		if (boxes[1].get_children().length) {
-			Main.panel._rightBox.insert_child_at_index(actors[1], Main.panel._rightBox.get_children().length - 1);
+		if (actors[1]) {
+			buttonContainer.insert_child_at_index(actors[1], buttonContainer.get_children().length - 1);
 		}
 		
-		updateVisibility();
 		return false;
 	});
 }
 
 function destroyButtons() {
 	actors.forEach(function(actor, i) {
-		actor.destroy();
-		boxes[i].destroy();
+		if (actor) {
+			actor.destroy();
+			boxes[i].destroy();
+		}
 	});
 	
 	actors = [];
@@ -128,7 +137,7 @@ function leftclick(callback) {
 }
 
 function minimize() {
-	let win = Util.getWindow();
+	let win = global.display.focus_window;
 	if (!win || win.minimized) {
 		WARN('impossible to minimize');
 		return;
@@ -138,7 +147,7 @@ function minimize() {
 }
 
 function maximize() {
-	let win = Util.getWindow();
+	let win = global.display.focus_window;
 	if (!win) {
 		WARN('impossible to maximize');
 		return;
@@ -156,7 +165,7 @@ function maximize() {
 }
 
 function close() {
-	let win = Util.getWindow();
+	let win = global.display.focus_window;
 	if (!win) {
 		WARN('impossible to close');
 		return;
@@ -210,18 +219,16 @@ function unloadTheme() {
  * callbacks
  */
 function updateVisibility() {
-	// If we have a window to control, then we show the buttons.
-	let visible = !Main.overview.visible;
-	if (visible) {
-		visible = false;
-		let win = Util.getWindow();
-		if (win) {
-			visible = win.decorated;
-		}
+	let win = global.display.focus_window
+	if (!win) {
+		return false;
 	}
 	
+	// Only show buttons when focused window title is shown in AppMenu (see app_menu.js)
+	let visible = win.decorated && win.get_maximized();
+	
 	actors.forEach(function(actor, i) {
-		if (!boxes[i].get_children().length) {
+		if (!actor) {
 			return;
 		}
 		
@@ -244,23 +251,16 @@ function init(extensionMeta) {
 }
 
 let wmCallbackIDs = [];
-let overviewCallbackIDs = [];
 let themeCallbackID = 0;
+let focusCallbackID = 0;
 
 function enable() {
 	loadTheme();
 	createButtons();
-	
-	overviewCallbackIDs.push(Main.overview.connect('showing', updateVisibility));
-	overviewCallbackIDs.push(Main.overview.connect('hidden', updateVisibility));
-	
-	let wm = global.window_manager;
-	wmCallbackIDs.push(wm.connect('switch-workspace', updateVisibility));
-	wmCallbackIDs.push(wm.connect('map', updateVisibility));
-	wmCallbackIDs.push(wm.connect('minimize', updateVisibility));
-	wmCallbackIDs.push(wm.connect('unminimize', updateVisibility));
-	
+
 	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
+	
+	focusCallbackID = global.display.connect('notify::focus-window', updateVisibility);
 	
 	themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
 }
@@ -269,13 +269,10 @@ function disable() {
 	wmCallbackIDs.forEach(function(id) {
 		global.window_manager.disconnect(id);
 	});
-	
-	overviewCallbackIDs.forEach(function(id) {
-		Main.overview.disconnect(id);
-	});
-	
 	wmCallbackIDs = [];
-	overviewCallbackIDs = [];
+	
+	global.display.disconnect(focusCallbackID);
+	focusCallbackID = 0;
 	
 	if (themeCallbackID !== 0) {
 		Gtk.Settings.get_default().disconnect(0);
