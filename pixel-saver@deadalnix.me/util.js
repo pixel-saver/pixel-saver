@@ -20,7 +20,7 @@ var DisplayWrapper = {
 function getWindow() {
 	// get all window in stacking order.
 	let windows = global.display.sort_windows_by_stacking(
-		global.screen.get_active_workspace().list_windows().filter(function (w) {
+		Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace().list_windows().filter(function (w) {
 			return w.get_window_type() !== Meta.WindowType.DESKTOP;
 		})
 	);
