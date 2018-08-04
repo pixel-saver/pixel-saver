@@ -3,10 +3,24 @@ const Meta = imports.gi.Meta;
 
 const MAXIMIZED = Meta.MaximizeFlags.BOTH;
 
+// This is wrapper to maintain compatibility with GNOME-Shell 3.30+ as well as
+// previous versions.
+var DisplayWrapper = {
+    getScreen: function() {
+        return global.screen || global.display;
+    },
+     getWorkspaceManager: function() {
+        return global.screen || global.workspace_manager;
+    },
+     getMonitorManager: function() {
+        return global.screen || Meta.MonitorManager.get();
+    }
+};
+
 function getWindow() {
 	// get all window in stacking order.
 	let windows = global.display.sort_windows_by_stacking(
-		global.screen.get_active_workspace().list_windows().filter(function (w) {
+		DisplayWrapper.getWorkspaceManager().get_active_workspace().list_windows().filter(function (w) {
 			return w.get_window_type() !== Meta.WindowType.DESKTOP;
 		})
 	);
