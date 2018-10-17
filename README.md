@@ -63,7 +63,7 @@ Support for older versions of gnome shell
 
 If you use an older version of gnome shell, here are the versions of pixel saver that you should use.
 
-| Gnome Shell | Latest recomanded version                                            |
+| Gnome Shell | Latest recommended version                                            |
 |-------------|----------------------------------------------------------------------|
 | 3.12        | [1.3](https://github.com/deadalnix/pixel-saver/releases/tag/1.3)     |
 | 3.14        | [1.5.1](https://github.com/deadalnix/pixel-saver/releases/tag/1.5.1) |
