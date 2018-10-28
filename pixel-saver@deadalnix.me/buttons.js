@@ -174,47 +174,6 @@ function close() {
 }
 
 /**
- * Theming
- */
-let activeCSS = false;
-function loadTheme() {
-	let theme = Gtk.Settings.get_default().gtk_theme_name,
-		cssPath = GLib.build_filenamev([extensionPath, 'themes', theme, 'style.css']);
-
-	LOG('Load theme ' + theme);
-	if (!GLib.file_test(cssPath, GLib.FileTest.EXISTS)) {
-		cssPath = GLib.build_filenamev([extensionPath, 'themes/default/style.css']);
-	}
-
-	if (cssPath === activeCSS) {
-		return;
-	}
-
-	unloadTheme();
-
-	// Load the new style
-	let cssFile = Gio.file_new_for_path(cssPath);
-	St.ThemeContext.get_for_stage(global.stage).get_theme().load_stylesheet(cssFile);
-
-	// Force style update.
-	actors.forEach(function(actor) {
-		actor.grab_key_focus();
-	});
-
-	activeCSS = cssPath;
-}
-
-function unloadTheme() {
-	if (activeCSS) {
-		LOG('Unload ' + activeCSS);
-
-		let cssFile = Gio.file_new_for_path(activeCSS);
-		St.ThemeContext.get_for_stage(global.stage).get_theme().unload_stylesheet(cssFile);
-		activeCSS = false;
-	}
-}
-
-/**
  * callbacks
  */
 function updateVisibility() {
@@ -253,10 +212,8 @@ function init(extensionMeta) {
 
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
-let themeCallbackID = 0;
 
 function enable() {
-	loadTheme();
 	createButtons();
 
 	overviewCallbackIDs.push(Main.overview.connect('showing', updateVisibility));
@@ -269,8 +226,6 @@ function enable() {
 	wmCallbackIDs.push(wm.connect('unminimize', updateVisibility));
 
 	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
-
-	themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
 }
 
 function disable() {
@@ -285,11 +240,5 @@ function disable() {
 	wmCallbackIDs = [];
 	overviewCallbackIDs = [];
 
-	if (themeCallbackID !== 0) {
-		Gtk.Settings.get_default().disconnect(0);
-		themeCallbackID = 0;
-	}
-
 	destroyButtons();
-	unloadTheme();
 }
