@@ -1,0 +1,19 @@
+/* The box-bin element holds the button-box element which holds each window-button.
+ *
+ * Control spacing between each button via .button-box.
+ */
+.box-bin {
+	border-width: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+
+.button-box {
+	spacing: 1px;
+}
+
+/* The style for each individual window button */
+.box-bin .window-button {
+	width: 28px;
+	height: 24px;
+}
