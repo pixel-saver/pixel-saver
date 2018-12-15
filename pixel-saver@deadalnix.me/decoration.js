@@ -310,9 +310,9 @@ let workspaces = [];
 function onChangeNWorkspaces() {
 	cleanWorkspaces();
 	
-	let i = global.workspace_manager.n_workspaces;
+	let i = global.workspace().n_workspaces;
 	while (i--) {
-		let ws = global.workspace_manager.get_workspace_by_index(i);
+		let ws = global.workspace().get_workspace_by_index(i);
 		workspaces.push(ws);
 		// we need to add a Mainloop.idle_add, or else in onWindowAdded the
 		// window's maximized state is not correct yet.
@@ -352,7 +352,7 @@ function init() {}
 let changeWorkspaceID = 0;
 function enable() {
 	// Connect events
-	changeWorkspaceID = global.workspace_manager.connect('notify::n-workspaces', onChangeNWorkspaces);
+	changeWorkspaceID = global.workspace().connect('notify::n-workspaces', onChangeNWorkspaces);
 	
 	/**
 	 * Go through already-maximised windows & undecorate.
@@ -376,7 +376,7 @@ function enable() {
 
 function disable() {
 	if (changeWorkspaceID) {
-		global.workspace_manager.disconnect(changeWorkspaceID);
+		global.workspace().disconnect(changeWorkspaceID);
 		changeWorkspaceID = 0;
 	}
 	
