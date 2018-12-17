@@ -45,9 +45,17 @@ function createButtons() {
 	let order = new Gio.Settings({schema_id: DCONF_META_PATH}).get_string('button-layout');
 	LOG('Buttons layout : ' + order);
 	
+	if (order.indexOf(':') == -1) {
+		LOG('Button layout empty')
+		return
+	}
+	
 	let orders = order.replace(/ /g, '').split(':');
 	
 	orders[0] = orders[0].split(',');
+	
+	// Check if it's actually exists, if not then create it
+	if(typeof orders[1] == 'undefined') orders[1] = '';
 	orders[1] = orders[1].split(',');
 	
 	const callbacks = {
@@ -237,10 +245,11 @@ function init(extensionMeta) {
 
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
+let themeCallbackID = 0;
 
 function enable() {
-	createButtons();
 	loadTheme();
+	createButtons();
 	
 	overviewCallbackIDs.push(Main.overview.connect('showing', updateVisibility));
 	overviewCallbackIDs.push(Main.overview.connect('hidden', updateVisibility));
@@ -252,6 +261,8 @@ function enable() {
 	wmCallbackIDs.push(wm.connect('unminimize', updateVisibility));
 	
 	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
+	
+	themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
 }
 
 function disable() {
@@ -266,7 +277,12 @@ function disable() {
 	wmCallbackIDs = [];
 	overviewCallbackIDs = [];
 	
-	unloadTheme();
+	if (themeCallbackID !== 0) {
+		Gtk.Settings.get_default().disconnect(0);
+		themeCallbackID = 0;
+	}
+	
 	destroyButtons();
+	unloadTheme();
 }
 

@@ -3,10 +3,24 @@ const Meta = imports.gi.Meta;
 
 const MAXIMIZED = Meta.MaximizeFlags.BOTH;
 
+// This is wrapper to maintain compatibility with GNOME-Shell 3.30+ as well as
+// previous versions.
+var DisplayWrapper = {
+    getScreen: function() {
+        return global.screen || global.display;
+    },
+     getWorkspaceManager: function() {
+        return global.screen || global.workspace_manager;
+    },
+     getMonitorManager: function() {
+        return global.screen || Meta.MonitorManager.get();
+    }
+};
+
 function getWindow() {
 	// get all window in stacking order.
 	let windows = global.display.sort_windows_by_stacking(
-		global.workspace().get_active_workspace().list_windows().filter(function (w) {
+		DisplayWrapper.getWorkspaceManager().get_active_workspace().list_windows().filter(function (w) {
 			return w.get_window_type() !== Meta.WindowType.DESKTOP;
 		})
 	);
@@ -26,19 +40,13 @@ function onSizeChange(callback) {
 	let callbackIDs = [];
 	let wm = global.window_manager;
 	
-	try {
-		// Gnome 3.16
-		callbackIDs.push(wm.connect('maximize', callback));
-		callbackIDs.push(wm.connect('unmaximize', callback));
-	} catch (e) {
-		// Gnome 3.18+
-		callbackIDs.push(wm.connect('size-change', callback));
-	}
+	// Obvious size change callback.
+	callbackIDs.push(wm.connect('size-change', callback));
 	
 	// Needed for window drag to top panel (this doesn't trigger maximize).
 	callbackIDs.push(wm.connect('hide-tile-preview', callback));
 	
-	// note: 'destroy' needs a delay for .list_windows() report correctly
+	// NB: 'destroy' needs a delay for .list_windows() report correctly
 	callbackIDs.push(wm.connect('destroy', function () {
 		Mainloop.idle_add(callback);
 	}));

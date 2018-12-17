@@ -96,6 +96,13 @@ let HIDE_DURATION = 0.1;
 let tooltipDelayCallbackID = 0;
 let menuCallbackID = 0;
 
+function resetMenuCallback() {
+	if (menuCallbackID) {
+		appMenu.menu.disconnect(menuCallbackID);
+		menuCallbackID = 0;
+	}
+}
+
 function onAppMenuHover(actor) {
 	let hover = actor.get_hover();
 	if (showTooltip === hover) {
@@ -111,15 +118,21 @@ function onAppMenuHover(actor) {
 				WARN('showTooltip is false and delay callback ran.');
 			}
 			
-			let label = appMenu._label._label;
+			// Something wants us to stop.
+			if (tooltipDelayCallbackID === 0) {
+				return false;
+			}
 			
-			if (!label.get_clutter_text().get_layout().is_ellipsized()) {
+			let label = appMenu._label;
+			if (label == null || !label.get_clutter_text().get_layout().is_ellipsized()) {
 				// Do not need to hide.
 				tooltipDelayCallbackID = 0;
 				return false;
 			}
 			
 			Main.uiGroup.add_actor(tooltip);
+			
+			resetMenuCallback();
 			menuCallbackID = appMenu.menu.connect('open-state-changed', function(menu, open) {
 				if (open) {
 					Main.uiGroup.remove_actor(tooltip);
@@ -128,15 +141,17 @@ function onAppMenuHover(actor) {
 				}
 			});
 			
+			[px, py] = Main.panel.actor.get_transformed_position();
 			[bx, by] = label.get_transformed_position();
 			[w, h] = label.get_transformed_size();
 			
-			let y = by + h + 5;
+			let y = py + Main.panel.actor.get_height() + 3;
 			let x = bx - Math.round((tooltip.get_width() - w)/2);
 			tooltip.opacity = 0;
 			tooltip.set_position(x, y);
 			
 			LOG('show title tooltip');
+			
 			Tweener.removeTweens(tooltip);
 			Tweener.addTween(tooltip, {
 				opacity: 255,
@@ -147,25 +162,20 @@ function onAppMenuHover(actor) {
 			return false;
 		});
 	} else if (tooltipDelayCallbackID > 0) {
-		if (!Mainloop.source_remove(tooltipDelayCallbackID)) {
-			// If the event ran, then we hide.
-			LOG('hide title tooltip');
-			
-			if (menuCallbackID) {
-				appMenu.menu.disconnect(menuCallbackID);
-				menuCallbackID = 0;
+		// If the event ran, then we hide.
+		LOG('hide title tooltip');
+		
+		resetMenuCallback();
+		
+		Tweener.removeTweens(tooltip);
+		Tweener.addTween(tooltip, {
+			opacity: 0,
+			time: HIDE_DURATION,
+			transition: 'easeOutQuad',
+			onComplete: function() {
+				Main.uiGroup.remove_actor(tooltip);
 			}
-			
-			Tweener.removeTweens(tooltip);
-			Tweener.addTween(tooltip, {
-				opacity: 0,
-				time: HIDE_DURATION,
-				transition: 'easeOutQuad',
-				onComplete: function() {
-					Main.uiGroup.remove_actor(tooltip);
-				}
-			});
-		}
+		});
 		
 		tooltipDelayCallbackID = 0;
 	}
@@ -176,20 +186,20 @@ function onAppMenuHover(actor) {
 /**
  * Subextension hooks
  */
-function init() {
-	tooltip = new St.Label({
-		style_class: 'tooltip dash-label',
-		text: '',
-	});
-}
+function init() {}
 
 let wmCallbackIDs = [];
 let focusCallbackID = 0;
 let tooltipCallbackID = 0;
 
 function enable() {
-	tooltip.opacity = 0;
 	appMenu = Main.panel.statusArea.appMenu;
+	
+	tooltip = new St.Label({
+		style_class: 'tooltip dash-label',
+		text: '',
+		opacity: 0
+	});
 	
 	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateAppMenu));
 	
@@ -221,11 +231,9 @@ function disable() {
 		tooltipDelayCallbackID = 0;
 	}
 	
-	if (menuCallbackID) {
-		appMenu.menu.disconnect(menuCallbackID);
-		menuCallbackID = 0;
-	}
+	resetMenuCallback();
 	
-	Main.uiGroup.remove_actor(tooltip);
+	tooltip.destroy();
+	tooltip = null;
 }
 

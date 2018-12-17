@@ -3,6 +3,10 @@ const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 const Util = imports.misc.util;
 
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const Utils = Me.imports.util;
+
 function LOG(message) {
 	// log("[pixel-saver]: " + message);
 }
@@ -187,7 +191,7 @@ function getOriginalState(win) {
  * **Caveat**: doesn't work with Ubuntu's Ambiance and Radiance window themes -
  * my guess is they don't respect or implement this property.
  * 
- * I don't know how to read the inital value, so I'm not sure how to resore it.
+ * I don't know how to read the initial value, so I'm not sure how to resore it.
  *
  * @param {Meta.Window} win - window to set the HIDE_TITLEBAR_WHEN_MAXIMIZED property of.
  * @param {boolean} hide - whether to hide the titlebar or not.
@@ -310,9 +314,9 @@ let workspaces = [];
 function onChangeNWorkspaces() {
 	cleanWorkspaces();
 	
-	let i = global.workspace().n_workspaces;
+	let i = Utils.DisplayWrapper.getWorkspaceManager().n_workspaces;
 	while (i--) {
-		let ws = global.workspace().get_workspace_by_index(i);
+		let ws = Utils.DisplayWrapper.getWorkspaceManager().get_workspace_by_index(i);
 		workspaces.push(ws);
 		// we need to add a Mainloop.idle_add, or else in onWindowAdded the
 		// window's maximized state is not correct yet.
@@ -352,7 +356,7 @@ function init() {}
 let changeWorkspaceID = 0;
 function enable() {
 	// Connect events
-	changeWorkspaceID = global.workspace().connect('notify::n-workspaces', onChangeNWorkspaces);
+	changeWorkspaceID = Utils.DisplayWrapper.getWorkspaceManager().connect('notify::n-workspaces', onChangeNWorkspaces);
 	
 	/**
 	 * Go through already-maximised windows & undecorate.
@@ -376,7 +380,7 @@ function enable() {
 
 function disable() {
 	if (changeWorkspaceID) {
-		global.workspace().disconnect(changeWorkspaceID);
+		Utils.DisplayWrapper.getWorkspaceManager().disconnect(changeWorkspaceID);
 		changeWorkspaceID = 0;
 	}
 	

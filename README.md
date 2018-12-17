@@ -1,9 +1,17 @@
 Pixel Saver
 ===========
 
-Pixel Saver is an extension for Gnome Shell that merge the activity bar and the title bar of maximized window. It is especially interesting for small screens, but MOAR pixels for your apps is always good !
+Pixel Saver is an extension for Gnome Shell that merge the activity bar and the
+title bar of maximized window. It is especially interesting for small screens,
+but MOAR pixels for your apps is always good !
 
-The extension has no configuration. Its behavior is made to mimic the one of the title bar and settings affecting the title bar should reflect in Pixel Saver. It **Just Works** !
+The extension has no configuration. Its behavior is made to mimic the one of
+the title bar and settings affecting the title bar should reflect in
+Pixel Saver. It **Just Works** !
+
+For applications using the modern GTK header bar, there are no space savings,
+but the application title is still displayed in the top panel to achieve a
+uniform appearance.
 
 <table>
 	<tr>
@@ -20,20 +28,30 @@ It is largely inspired by [bios and mathematicalcoffee's Window Buttons Extensio
 Installation
 ------------
 
-Simply follow the instructions and everything should be fine :
+Install it with one click from the [GNOME extension repository](https://extensions.gnome.org/extension/723/pixel-saver/).
+
+You can also follow these simple instructions for manual installation :
 
     git clone https://github.com/deadalnix/pixel-saver.git
     cd pixel-saver
     # Get the last released version
-	git checkout 1.9
+	git checkout 1.10
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
     # activate
     gnome-shell-extension-tool -e pixel-saver@deadalnix.me
 
+For code changes to become effective, you might need to reload GNOME Shell
+by pressing <kbd>Alt</kbd> + <kbd>F2</kbd> and entering <kbd>r</kbd> .
+
 ### Dependencies
 
-Pixel Saver depends on Xorg's xprop utility.
+Pixel Saver depends on Xorg's xprop and xwininfo utilities. If not already
+present on your system, these can be installed using:
+
+* Debian/Ubuntu: `apt install x11-utils`
+* Fedora/RHEL: `dnf install xorg-x11-utils`
+* Arch: `pacman -S xorg-xprop`
 
 Configuration
 -------------
@@ -43,7 +61,13 @@ Don't be silly !
 Support for older versions of gnome shell
 -----------
 
-Version 1.3 will be the last version to support gnome shell prior to 3.12 .
+If you use an older version of gnome shell, here are the versions of pixel saver that you should use.
+
+| Gnome Shell | Latest recommended version                                            |
+|-------------|----------------------------------------------------------------------|
+| 3.12        | [1.3](https://github.com/deadalnix/pixel-saver/releases/tag/1.3)     |
+| 3.14        | [1.5.1](https://github.com/deadalnix/pixel-saver/releases/tag/1.5.1) |
+| 3.15        | [1.10](https://github.com/deadalnix/pixel-saver/releases/tag/1.10)   |
 
 Screenshots
 -----------
