@@ -43,6 +43,11 @@
  * [5]:http://www.webupd8.org/2011/05/how-to-remove-maximized-windows.html
  *
  */
+
+global.workspace = function() {
+  global.screen ? global.screen : global.workspace_manager;
+}
+
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Decoration = Me.imports.decoration;
