@@ -5,8 +5,12 @@
  * Other contributors:
  * - Amy Chan <mathematical.coffee@gmail.com>
  * Sept-- 2013.
+ * forked by Jens Timmerman <jens.timmerman@gmail.com>
+ * Feb-- 2019.
  *
  * ## Help! It didn't work/I found a bug!
+ * This is not the original plugin, but a fork for gnome shell 3.30 with some extra fixes
+ * the code is found at https://github.com/JensTimmerman/pixel-saver
  *
  * This extension is based on work by Amy Chan, namely maximus[1] and Window Buttons[2].
  *
