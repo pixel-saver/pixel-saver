@@ -127,7 +127,7 @@ const WindowState = {
 }
 
 /**
- * Get the value of _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED before
+ * Get the value of _MOTIF_WM_HINTS before
  * pixel saver did its magic.
  * 
  * @param {Meta.Window} win - the window to check the property
@@ -151,15 +151,17 @@ function getOriginalState(win) {
 		return win._pixelSaverOriginalState = State.UNKNOWN;
 	}
 	
-	let str = xprops[1].toString();
+	let str = imports.byteArray.toString(xprops[1]);
 	let m = str.match(/^_PIXEL_SAVER_ORIGINAL_STATE\(CARDINAL\) = ([0-9]+)$/m);
+        log(m);
 	if (m) {
 		return win._pixelSaverOriginalState = !!m[1]
 			? WindowState.HIDE_TITLEBAR
 			: WindowState.DEFAULT;
 	}
 	
-	m = str.match(/^_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED(\(CARDINAL\))? = ([0-9]+)$/m);
+	m = str.match(/^_MOTIF_WM_HINTS(\(CARDINAL\))? = [0-9], [0-9]$/m);
+        log(m);
 	if (m) {
 		let state = !!m[1];
 		cmd = ['xprop', '-id', id,
@@ -175,7 +177,7 @@ function getOriginalState(win) {
 	
 	WARN("Can't find original state for " + win.title + " with id " + id);
 	
-	// GTK uses the _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED atom to indicate that the
+	// GTK uses the _MOTIF_WM_HINTS atom to indicate that the
 	// title bar should be hidden when maximized. If we can't find this atom, the
 	// window uses the default behavior
 	return win._pixelSaverOriginalState = WindowState.DEFAULT;
@@ -184,7 +186,7 @@ function getOriginalState(win) {
 /**
  * Tells the window manager to hide the titlebar on maximised windows.
  *
- * Does this by setting the _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED hint - means
+ * Does this by setting the _MOTIF_WM_HINTS hint - means
  * I can do it once and forget about it, rather than tracking maximize/unmaximize
  * events.
  *
@@ -203,16 +205,17 @@ function setHideTitlebar(win, hide) {
 	getOriginalState(win);
 	
 	/**
-	 * Undecorate with xprop. Use _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED.
-	 * See (eg) mutter/src/window-props.c
+	 * Undecorate with xprop. Use _MOTIF_WM_HINTS instead of _GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED because
+	 * mutter deprecated it in 3.32 (https://gitlab.gnome.org/GNOME/mutter/merge_requests/221)
 	 */
 	let cmd = ['xprop', '-id', guessWindowXID(win),
-	           '-f', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED', '32c',
-	           '-set', '_GTK_HIDE_TITLEBAR_WHEN_MAXIMIZED',
-	           (hide ? '0x1' : '0x0')];
+	           '-f', '_MOTIF_WM_HINTS', '32c',
+	           '-set', '_MOTIF_WM_HINTS',
+	           (hide ? '0x2, 0x0, 0x0, 0x0, 0x0' : '0x1, 0x1, 0x0, 0x0, 0x0')];
 	LOG(cmd.join(' '));
 	
 	// Run xprop
+        let success, pid;
 	[success, pid] = GLib.spawn_async(
 		null,
 		cmd,
