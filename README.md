@@ -36,8 +36,8 @@ You can also follow these simple instructions for manual installation :
 
     git clone https://github.com/JensTimmerman/pixel-saver.git
     cd pixel-saver
-    # Get the last released version
-	git checkout 1.10
+    # Get the last bleeding edge version, the last official release is in original deadalnix fork.
+	git checkout master
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
     # activate
