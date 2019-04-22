@@ -211,7 +211,7 @@ function setHideTitlebar(win, hide) {
 	let cmd = ['xprop', '-id', guessWindowXID(win),
 	           '-f', '_MOTIF_WM_HINTS', '32c',
 	           '-set', '_MOTIF_WM_HINTS',
-	           (hide ? '0x2, 0x0, 0x0, 0x0, 0x0' : '0x1, 0x1, 0x0, 0x0, 0x0')];
+	           (hide ? '0x2, 0x0, 0x0, 0x0, 0x0' : '0x2, 0x0, 0x1, 0x0, 0x0')];
 	LOG(cmd.join(' '));
 	
 	// Run xprop
@@ -297,7 +297,7 @@ function onWindowAdded(ws, win, retry) {
 		}
 		
 		LOG('onWindowAdded: ' + win.get_title());
-		setHideTitlebar(win, true);
+		changeTitleBar(win);
 		return false;
 	});
 	
@@ -305,6 +305,40 @@ function onWindowAdded(ws, win, retry) {
 }
 
 let workspaces = [];
+
+/**
+ * Call if when a window is changed.
+ * If the window is maximized, hide the title bar, otherwise show it.
+ * 
+ * @param {Meta.Window} win the window that changed
+ */
+function onWindowChanged(win) {
+	if (win.window_type === Meta.WindowType.DESKTOP) {
+		return false;
+	}
+	changeTitleBar(win);
+	return false;
+}
+
+/**
+ * Callback for whenever focus changes.
+ */
+function onChangeFocus() {
+	LOG('Focus changed');
+	let focusWindow = global.display.focus_window;
+	if(!focusWindow) return;
+	Mainloop.idle_add(function () { return onWindowChanged(focusWindow); });
+}
+
+/**
+ * Callback whenever window changes.
+ */
+function onChangeWindowSize() {
+	LOG('Window size changed');
+	let focusWindow = global.display.focus_window;
+	if(!focusWindow) return;
+	Mainloop.idle_add(function () { return onWindowChanged(focusWindow); });
+}
 
 /**
  * Callback whenever the number of workspaces changes.
@@ -351,15 +385,56 @@ function forEachWindow(callback) {
 		.forEach(callback);
 }
 
+function changeTitleBar(win) {
+	if (ignoreWindow(win)) return;
+	if (win.get_maximized()) {
+		LOG('Hiding titlebar');
+		hideTitlebar(win);
+	} else {
+		LOG('Showing titlebar');
+		showTitlebar(win);
+	}
+}
+
+function showTitlebar(win) {
+	if (!win._decorationOFF) return;
+
+	win._decorationOFF = false;
+	setHideTitlebar(win, false);
+}
+
+function hideTitlebar(win) {
+	if (win._decorationOFF) return;
+
+	win._decorationOFF = true;
+	setHideTitlebar(win, true);
+}
+
+/**
+ * Decides if the window should be ignored.
+ * It should be ignored if the window didn't have a titlebar in the first place.
+ * @param {Meta.Window} win The window to check
+ */
+function ignoreWindow(win) {
+	let state = getOriginalState(win);
+	let ignore = (state !== WindowState.DEFAULT)
+	return ignore;
+}
+
 /**
  * Subextension hooks
  */
 function init() {}
 
 let changeWorkspaceID = 0;
+let globWindowManagerID = 0;
+let globDisplayID = 0;
 function enable() {
 	// Connect events
 	changeWorkspaceID = Utils.DisplayWrapper.getWorkspaceManager().connect('notify::n-workspaces', onChangeNWorkspaces);
+	globWindowManagerID = Utils.DisplayWrapper.getWindowManager().connect('size-change', onChangeWindowSize);
+	globDisplayID = Utils.DisplayWrapper.getDisplay().connect('notify::focus-window', onChangeFocus);
+	
 	
 	/**
 	 * Go through already-maximised windows & undecorate.
@@ -374,6 +449,7 @@ function enable() {
 	Mainloop.idle_add(function () {
 		forEachWindow(function(win) {
 			onWindowAdded(null, win);
+			onWindowChanged(win);
 		});
 		
 		onChangeNWorkspaces();
@@ -386,6 +462,14 @@ function disable() {
 		Utils.DisplayWrapper.getWorkspaceManager().disconnect(changeWorkspaceID);
 		changeWorkspaceID = 0;
 	}
+	if(globWindowManagerID) {
+		Utils.DisplayWrapper.getWindowManager().disconnect(globWindowManagerID);
+		globWindowManagerID = 0;
+	}
+	if(globDisplayID) {
+		Utils.DisplayWrapper.getDisplay().disconnect(globDisplayID);
+		globDisplayID = 0;
+	}
 	
 	cleanWorkspaces();
 	
@@ -397,6 +481,7 @@ function disable() {
 		}
 		
 		delete win._pixelSaverOriginalState;
+		delete win._decorationOFF;
 	});
 }
 
