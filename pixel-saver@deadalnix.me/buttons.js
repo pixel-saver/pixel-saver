@@ -216,7 +216,7 @@ function updateVisibility() {
 		visible = false;
 		let win = Util.getWindow();
 		if (win) {
-			visible = win.decorated;
+			visible = !win.decorated;
 		}
 	}
 	
