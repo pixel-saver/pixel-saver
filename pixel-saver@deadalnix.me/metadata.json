@@ -3,5 +3,5 @@
 	"name": "Pixel Saver fork",
 	"description": "Pixel Saver is designed to save pixel by fusing activity bar and title bar in a natural way, This is a fork from the original",
 	"url": "https://github.com/jenstimmerman/pixel-saver",
-	"shell-version": ["3.30", "3.18", "3.20", "3.22", "3.24", "3.26"]
+	"shell-version": ["3.32", "3.30", "3.18", "3.20", "3.22", "3.24", "3.26"]
 }
