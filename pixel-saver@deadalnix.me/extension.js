@@ -5,8 +5,12 @@
  * Other contributors:
  * - Amy Chan <mathematical.coffee@gmail.com>
  * Sept-- 2013.
+ * forked by Jens Timmerman <jens.timmerman@gmail.com>
+ * Feb-- 2019.
  *
  * ## Help! It didn't work/I found a bug!
+ * This is not the original plugin, but a fork for gnome shell 3.30 with some extra fixes
+ * the code is found at https://github.com/JensTimmerman/pixel-saver
  *
  * This extension is based on work by Amy Chan, namely maximus[1] and Window Buttons[2].
  *
@@ -43,6 +47,11 @@
  * [5]:http://www.webupd8.org/2011/05/how-to-remove-maximized-windows.html
  *
  */
+
+global.workspace = function() {
+  global.screen ? global.screen : global.workspace_manager;
+}
+
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Decoration = Me.imports.decoration;

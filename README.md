@@ -5,6 +5,8 @@ Pixel Saver is an extension for Gnome Shell that merge the activity bar and the
 title bar of maximized window. It is especially interesting for small screens,
 but MOAR pixels for your apps is always good !
 
+This repo is forked form the original by deadalnix, and has some fixes merged into it since deadalnix became unresponsive.
+
 The extension has no configuration. Its behavior is made to mimic the one of
 the title bar and settings affecting the title bar should reflect in
 Pixel Saver. It **Just Works** !
@@ -32,10 +34,10 @@ Install it with one click from the [GNOME extension repository](https://extensio
 
 You can also follow these simple instructions for manual installation :
 
-    git clone https://github.com/deadalnix/pixel-saver.git
+    git clone https://github.com/JensTimmerman/pixel-saver.git
     cd pixel-saver
-    # Get the last released version
-	git checkout 1.10
+    # Get the last bleeding edge version, the last official release is in original deadalnix fork.
+	git checkout master
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
     # activate

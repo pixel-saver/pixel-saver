@@ -45,7 +45,7 @@ function createButtons() {
 	let order = new Gio.Settings({schema_id: DCONF_META_PATH}).get_string('button-layout');
 	LOG('Buttons layout : ' + order);
 	
-	if (order.indexOf(':') == -1) {
+	if (order.indexOf(':') == -1 && order.length <= 1) {
 		LOG('Button layout empty')
 		return
 	}
@@ -216,7 +216,7 @@ function updateVisibility() {
 		visible = false;
 		let win = Util.getWindow();
 		if (win) {
-			visible = win.decorated;
+			visible = !win.decorated;
 		}
 	}
 	
@@ -225,8 +225,8 @@ function updateVisibility() {
 			return;
 		}
 		
-		if (visible) {
-			actor.show();
+	   	if (visible) {
+	        	actor.show();
 		} else {
 			actor.hide();
 		}
@@ -246,6 +246,7 @@ function init(extensionMeta) {
 let wmCallbackIDs = [];
 let overviewCallbackIDs = [];
 let themeCallbackID = 0;
+let focusCallbackID = 0;
 
 function enable() {
 	loadTheme();
@@ -263,6 +264,8 @@ function enable() {
 	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
 	
 	themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
+
+ 	focusCallbackID = global.display.connect('notify::focus-window', updateVisibility);
 }
 
 function disable() {
@@ -277,6 +280,9 @@ function disable() {
 	wmCallbackIDs = [];
 	overviewCallbackIDs = [];
 	
+	global.display.disconnect(focusCallbackID);
+	focusCallbackID = 0;
+
 	if (themeCallbackID !== 0) {
 		Gtk.Settings.get_default().disconnect(0);
 		themeCallbackID = 0;
