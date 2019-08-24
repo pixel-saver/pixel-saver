@@ -14,13 +14,13 @@ var DisplayWrapper = {
     },
      getMonitorManager: function() {
         return global.screen || Meta.MonitorManager.get();
-	},
-	getWindowManager: function() {
-		return global.screen || global.window_manager;
-	},
-	getDisplay: function() {
-		return global.screen || global.display;
-	}
+    },
+     getWindowManager: function() {
+	return global.screen || global.window_manager;
+    },
+     getDisplay: function() {
+	return global.screen || global.display;
+    }
 };
 
 function getWindow() {
