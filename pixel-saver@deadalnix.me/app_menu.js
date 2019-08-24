@@ -36,6 +36,7 @@ function updateAppMenu() {
 		title = app.get_name();
 	}
 	
+	title = title.replace(/\n/g, " ");
 	LOG('Override title ' + title);
 	appMenu._label.set_text(title);
 	tooltip.text = title;
