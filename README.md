@@ -32,14 +32,14 @@ Install it with one click from the [GNOME extension repository](https://extensio
 
 You can also follow these simple instructions for manual installation :
 
-    bash```
+```console
     git clone https://github.com/deadalnix/pixel-saver.git
     cd pixel-saver
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
     # activate
     gnome-shell-extension-tool -e pixel-saver@deadalnix.me
-    ```
+```
 For code changes to become effective, you might need to reload GNOME Shell
 by pressing <kbd>Alt</kbd> + <kbd>F2</kbd> and entering <kbd>r</kbd> .
 
