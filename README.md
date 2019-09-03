@@ -32,7 +32,7 @@ Install it with one click from the [GNOME extension repository](https://extensio
 
 You can also follow these simple instructions for manual installation :
 
-    ```bash
+    bash```
     git clone https://github.com/deadalnix/pixel-saver.git
     cd pixel-saver
     # copy to extensions directory
