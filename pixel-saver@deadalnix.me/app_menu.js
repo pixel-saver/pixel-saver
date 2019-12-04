@@ -37,9 +37,10 @@ function updateAppMenu() {
 	}
 	
 	if (title.length > 32) {
-        	title = title.substr(0, 30) + '...';
-    	}
-	
+     title = title.substr(0, 30) + '...';
+  }
+	title = title.replace(/\n/g, " ");
+
 	LOG('Override title ' + title);
 	appMenu._label.set_text(title);
 	tooltip.text = title;

@@ -45,7 +45,7 @@ function createButtons() {
 	let order = new Gio.Settings({schema_id: DCONF_META_PATH}).get_string('button-layout');
 	LOG('Buttons layout : ' + order);
 	
-	if (order.indexOf(':') == -1) {
+	if (order.indexOf(':') == -1 && order.length <= 1) {
 		LOG('Button layout empty')
 		return
 	}
@@ -216,7 +216,7 @@ function updateVisibility() {
 		visible = false;
 		let win = Util.getWindow();
 		if (win) {
-			visible = win.decorated;
+			visible = !win.decorated;
 		}
 	}
 	
