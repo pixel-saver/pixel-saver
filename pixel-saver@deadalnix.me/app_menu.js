@@ -36,8 +36,8 @@ function updateAppMenu() {
 		title = app.get_name();
 	}
 	
-	if (title.length > 32) {
-     title = title.substr(0, 30) + '...';
+	if (title.length > 64) {
+     title = title.substr(0, 62) + '...';
   }
 	title = title.replace(/\n/g, " ");
 
