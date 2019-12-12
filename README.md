@@ -72,6 +72,10 @@ If you use an older version of gnome shell, here are the versions of pixel saver
 | 3.12        | [1.3](https://github.com/deadalnix/pixel-saver/releases/tag/1.3)     |
 | 3.14        | [1.5.1](https://github.com/deadalnix/pixel-saver/releases/tag/1.5.1) |
 | 3.15        | [1.10](https://github.com/deadalnix/pixel-saver/releases/tag/1.10)   |
+| 3.24        | [1.12](https://github.com/deadalnix/pixel-saver/releases/tag/1.12)   |
+| 3.26        | [1.14](https://github.com/deadalnix/pixel-saver/releases/tag/1.14)   |
+| 3.30        | [1.18](https://github.com/deadalnix/pixel-saver/releases/tag/1.18)   |
+| 3.32        | [1.20](https://github.com/deadalnix/pixel-saver/releases/tag/1.20)   |
 
 Screenshots
 -----------
