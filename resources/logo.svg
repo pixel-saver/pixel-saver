@@ -16,9 +16,9 @@
    viewBox="0 0 6.3499999 6.3499999"
    version="1.1"
    id="svg8"
-   sodipodi:docname="pixel-saver.svg"
+   sodipodi:docname="logo.svg"
    inkscape:version="0.92.4 5da689c313, 2019-01-14"
-   inkscape:export-filename="/home/desktopper/Immagini/pixel-saver.png"
+   inkscape:export-filename="/home/desktopper/Projects/pixel-saver/resources/logo48.png"
    inkscape:export-xdpi="191.54109"
    inkscape:export-ydpi="191.54109">
   <defs
@@ -77,7 +77,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="31.678384"
      inkscape:cx="14.705897"
-     inkscape:cy="14.73565"
+     inkscape:cy="7.1595061"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -115,8 +115,8 @@
     <rect
        style="opacity:1;fill:url(#linearGradient4633-3);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.61030334;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4552-6-2"
-       width="6.3348465"
-       height="1.9885294"
+       width="7.286994"
+       height="2.0052297"
        x="0.024197211"
        y="293.41122"
        ry="0"
@@ -124,8 +124,8 @@
     <rect
        style="opacity:1;fill:url(#linearGradient4633);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.41817054;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4552-6"
-       width="6.7842822"
-       height="4.0889096"
+       width="7.6696129"
+       height="4.0471368"
        x="-0.2023932"
        y="293.21008"
        ry="0.75372767"
