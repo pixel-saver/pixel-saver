@@ -39,6 +39,16 @@ Get it!
 | 3.14        | [1.5.1](https://github.com/deadalnix/pixel-saver/releases/tag/1.5.1) | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 | 3.12        | [1.3](https://github.com/deadalnix/pixel-saver/releases/tag/1.3)     | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 
+Pixel saver has been available for a long time on 
+[GNOME Extensions website](https://extensions.gnome.org/extension/723/pixel-saver/) 
+(so it is on 
+[GNOME Software](https://wiki.gnome.org/Apps/Software), too),
+but it has not been updated there since 2016.
+
+*New* releases are in process of being [reviewed](https://extensions.gnome.org/review) (see #177).
+
+In the meantime, you can install the extension manually.
+
 
 ### Manual install
 
