@@ -15,8 +15,8 @@ uniform appearance.
 
 <table>
 	<tr>
-		<td><img src="https://raw.github.com/deadalnix/pixel-saver/master/title.png" /></td>
-		<td><img src="https://raw.github.com/deadalnix/pixel-saver/master/icons.png" /></td>
+		<td><img src="https://raw.github.com/deadalnix/pixel-saver/master/resources/title.png" /></td>
+		<td><img src="https://raw.github.com/deadalnix/pixel-saver/master/resources/icons.png" /></td>
 	</tr>
 	<tr>
 		<td colspan="2">The title bar is completely gone and integrated to the activity bar.</td>
@@ -25,13 +25,35 @@ uniform appearance.
 
 It is largely inspired by [bios and mathematicalcoffee's Window Buttons Extension](https://github.com/mathematicalcoffee/Gnome-Shell-Window-Buttons-Extension) and [mathematicalcoffee's maximus extension](https://bitbucket.org/mathematicalcoffee/maximus-gnome-shell-extension) and some code come from there. You may want to check theses out, especially if you want something more configurable.
 
-Installation
+Get it!
 ------------
 
-Install it with one click from the [GNOME extension repository](https://extensions.gnome.org/extension/723/pixel-saver/).
+| Gnome Shell version| Pixel saver version                                           | Recommended installation method  |
+|-------------|----------------------------------------------------------------------|--------------|
+| 3.34        | [latest](https://github.com/deadalnix/pixel-saver)                   | Manual
+| 3.32        | [1.20](https://github.com/deadalnix/pixel-saver/releases/tag/1.20)   | Manual
+| 3.30        | [1.18](https://github.com/deadalnix/pixel-saver/releases/tag/1.18)   | Manual
+| 3.26        | [1.14](https://github.com/deadalnix/pixel-saver/releases/tag/1.14)   | Manual
+| 3.24        | [1.12](https://github.com/deadalnix/pixel-saver/releases/tag/1.12)   | Manual
+| 3.15        | [1.10](https://github.com/deadalnix/pixel-saver/releases/tag/1.10)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
+| 3.14        | [1.5.1](https://github.com/deadalnix/pixel-saver/releases/tag/1.5.1) | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
+| 3.12        | [1.3](https://github.com/deadalnix/pixel-saver/releases/tag/1.3)     | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 
-You can also follow these simple instructions for manual installation :
 
+### Manual install
+
+#### From graphical interface
+
+- (eventually) switch to the tag for your version from this page;
+- download the repo's zip from the green button;
+- navigate from your home to the gnome shell extension directory 
+`.local/share/gnome-shell/extensions`;
+- unzip the `pixel-saver@deadalnix.me` directory in extension directory;
+- reload `gnome-shell` pressing <kbd>Alt</kbd> + <kbd>F2</kbd> and entering <kbd>r</kbd>;
+- enable the extension using [GNOME Tweaks](https://wiki.gnome.org/Apps/Tweaks).
+
+#### From terminal
+ 
 ```bash
     # Clone repository
     git clone https://github.com/deadalnix/pixel-saver.git
@@ -39,18 +61,22 @@ You can also follow these simple instructions for manual installation :
     # Enter cloned directory
     cd pixel-saver
 
+    # Switch to tag 1.20
+    git checkout tags/1.20
+
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
 
     # activate
     gnome-shell-extension-tool -e pixel-saver@deadalnix.me
 ```
-For code changes to become effective, you might need to reload GNOME Shell
+
+At last, remember to reload GNOME Shell
 by pressing <kbd>Alt</kbd> + <kbd>F2</kbd> and entering <kbd>r</kbd> .
 
 ### Dependencies
 
-Pixel Saver depends on Xorg's xprop and xwininfo utilities. If not already
+Pixel Saver depends on Xorg's `xprop` and `xwininfo` utilities. If not already
 present on your system, these can be installed using:
 
 * Debian/Ubuntu: `apt install x11-utils`
@@ -62,23 +88,8 @@ Configuration
 
 Don't be silly!
 
-Support for older versions of gnome shell
------------
-
-If you use an older version of gnome shell, here are the versions of pixel saver that you should use.
-
-| Gnome Shell | Latest recommended version                                            |
-|-------------|----------------------------------------------------------------------|
-| 3.12        | [1.3](https://github.com/deadalnix/pixel-saver/releases/tag/1.3)     |
-| 3.14        | [1.5.1](https://github.com/deadalnix/pixel-saver/releases/tag/1.5.1) |
-| 3.15        | [1.10](https://github.com/deadalnix/pixel-saver/releases/tag/1.10)   |
-| 3.24        | [1.12](https://github.com/deadalnix/pixel-saver/releases/tag/1.12)   |
-| 3.26        | [1.14](https://github.com/deadalnix/pixel-saver/releases/tag/1.14)   |
-| 3.30        | [1.18](https://github.com/deadalnix/pixel-saver/releases/tag/1.18)   |
-| 3.32        | [1.20](https://github.com/deadalnix/pixel-saver/releases/tag/1.20)   |
-
 Screenshots
 -----------
 
-If you want to see what the full desktop look like with this extension, you can check out what a [unmaximized window](https://raw.github.com/deadalnix/pixel-saver/master/unmax.png) looks like, as well as a [maximized one](https://raw.github.com/deadalnix/pixel-saver/master/max.png).
+If you want to see what the full desktop look like with this extension, you can check out what a [unmaximized window](https://raw.github.com/deadalnix/pixel-saver/master/resources/unmax.png) looks like, as well as a [maximized one](https://raw.github.com/deadalnix/pixel-saver/master/resources/max.png).
 
