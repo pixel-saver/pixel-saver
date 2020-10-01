@@ -170,6 +170,10 @@ function close() {
  */
 let activeCSS = false;
 function loadTheme() {
+    if (!Gtk.Settings.get_default()) {
+        return;
+    }
+
 	let theme = Gtk.Settings.get_default().gtk_theme_name,
 		cssPath = GLib.build_filenamev([extensionPath, 'themes', theme, 'style.css']);
 	
@@ -262,7 +266,10 @@ function enable() {
 	
 	wmCallbackIDs = wmCallbackIDs.concat(Util.onSizeChange(updateVisibility));
 	
-	themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
+
+    if (Gtk.Settings.get_default()) {
+        themeCallbackID = Gtk.Settings.get_default().connect('notify::gtk-theme-name', loadTheme);
+    }
 }
 
 function disable() {
@@ -277,7 +284,7 @@ function disable() {
 	wmCallbackIDs = [];
 	overviewCallbackIDs = [];
 	
-	if (themeCallbackID !== 0) {
+	if (themeCallbackID !== 0 && Gtk.Settings.get_default()) {
 		Gtk.Settings.get_default().disconnect(0);
 		themeCallbackID = 0;
 	}
