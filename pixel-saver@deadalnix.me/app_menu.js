@@ -3,7 +3,6 @@ const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Tweener = imports.tweener.tweener;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -157,11 +156,11 @@ function onAppMenuHover(actor) {
 			
 			LOG('show title tooltip');
 			
-			Tweener.removeTweens(tooltip);
-			Tweener.addTween(tooltip, {
+			tooltip.remove_all_transitions();
+			tooltip.ease({
 				opacity: 255,
 				time: SHOW_DURATION,
-				transition: 'easeOutQuad',
+				transition: Clutter.AnimationMode.EASE_OUT_QUAD,
 			});
 			
 			return false;
@@ -172,11 +171,11 @@ function onAppMenuHover(actor) {
 		
 		resetMenuCallback();
 		
-		Tweener.removeTweens(tooltip);
-		Tweener.addTween(tooltip, {
+		tooltip.remove_all_transitions();
+		tooltip.ease({
 			opacity: 0,
 			time: HIDE_DURATION,
-			transition: 'easeOutQuad',
+			transition: Clutter.AnimationMode.EASE_OUT_QUAD,
 			onComplete: function() {
 				Main.uiGroup.remove_actor(tooltip);
 			}
