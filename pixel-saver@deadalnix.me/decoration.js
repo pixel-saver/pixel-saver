@@ -222,22 +222,6 @@ function setHideTitlebar(win, hide) {
 		null,
 		GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD,
 		null);
-	
-	// After xprop completes, unmaximize and remaximize any window
-	// that is already maximized. It seems that setting the xprop on
-	// a window that is already maximized doesn't actually take
-	// effect immediately but it needs a focuse change or other
-	// action to force a relayout. Doing unmaximize and maximize
-	// here seems to be an uninvasive way to handle this. This needs
-	// to happen _after_ xprop completes.
-	GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, function () {
-		const MAXIMIZED = Meta.MaximizeFlags.BOTH;
-		let flags = win.get_maximized();
-		if (flags == MAXIMIZED) {
-			win.unmaximize(MAXIMIZED);
-			win.maximize(MAXIMIZED);
-		}
-	});
 }
 
 /**** Callbacks ****/
