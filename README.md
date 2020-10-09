@@ -30,7 +30,8 @@ Get it!
 
 | Gnome Shell version| Pixel saver version                                           | Recommended installation method  |
 |-------------|----------------------------------------------------------------------|--------------|
-| 3.34        | [latest](https://github.com/deadalnix/pixel-saver)                   | Manual
+| 3.36        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual   
+| 3.34        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual
 | 3.32        | [1.20](https://github.com/deadalnix/pixel-saver/releases/tag/1.20)   | Manual
 | 3.30        | [1.18](https://github.com/deadalnix/pixel-saver/releases/tag/1.18)   | Manual
 | 3.26        | [1.14](https://github.com/deadalnix/pixel-saver/releases/tag/1.14)   | Manual
@@ -77,8 +78,12 @@ In the meantime, you can install the extension manually.
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
 
-    # activate
+    # activate 
+    # GNOME <3.38
     gnome-shell-extension-tool -e pixel-saver@deadalnix.me
+    # GNOME >= 3.38
+    gnome-extensions enable pixel-saver@deadalnix.me
+
 ```
 
 At last, remember to reload GNOME Shell
