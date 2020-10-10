@@ -1,4 +1,6 @@
 const GLib = imports.gi.GLib;
+const Gio = imports.gi.Gio;
+const Main = imports.ui.main
 const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 const Util = imports.misc.util;
@@ -13,6 +15,16 @@ function LOG(message) {
 
 function WARN(message) {
 	log("[pixel-saver]: " + message);
+}
+
+function check_xprop() {
+        let file = Gio.File.new_for_path("/usr/bin/xprop");
+        try{
+          let [success, contents] = file.load_contents(null);
+        }   
+        catch(err) {
+          Main.notify("Pixel saver", "The extension needs the program 'xprop' to run.");
+        }   
 }
 
 /**
@@ -414,6 +426,10 @@ let changeWorkspaceID = 0;
 let globWindowManagerID = 0;
 let globDisplayID = 0;
 function enable() {
+	
+        // Check xprop
+        check_xprop()
+
 	// Connect events
 	changeWorkspaceID = Utils.DisplayWrapper.getWorkspaceManager().connect('notify::n-workspaces', onChangeNWorkspaces);
 	globWindowManagerID = Utils.DisplayWrapper.getWindowManager().connect('size-change', onChangeWindowSize);

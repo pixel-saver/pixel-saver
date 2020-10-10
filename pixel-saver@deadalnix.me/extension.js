@@ -48,6 +48,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Decoration = Me.imports.decoration;
 const Buttons = Me.imports.buttons;
 const AppMenu = Me.imports.app_menu;
+const Main = imports.ui.main
 
 function init(extensionMeta) {
 	Buttons.init(extensionMeta);
