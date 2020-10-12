@@ -31,12 +31,12 @@ Get it!
 | Gnome Shell version| Pixel saver version                                           | Recommended installation method  |
 |-------------|----------------------------------------------------------------------|--------------|
 | 3.38        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual   
-| 3.36        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual   
-| 3.34        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual
-| 3.32        | [1.20](https://github.com/deadalnix/pixel-saver/releases/tag/1.20)   | Manual
-| 3.30        | [1.18](https://github.com/deadalnix/pixel-saver/releases/tag/1.18)   | Manual
-| 3.26        | [1.14](https://github.com/deadalnix/pixel-saver/releases/tag/1.14)   | Manual
-| 3.24        | [1.12](https://github.com/deadalnix/pixel-saver/releases/tag/1.12)   | Manual
+| 3.36        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
+| 3.34        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
+| 3.32        | [1.20](https://github.com/deadalnix/pixel-saver/releases/tag/1.20)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
+| 3.30        | [1.18](https://github.com/deadalnix/pixel-saver/releases/tag/1.18)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
+| 3.26        | [1.14](https://github.com/deadalnix/pixel-saver/releases/tag/1.14)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
+| 3.24        | [1.12](https://github.com/deadalnix/pixel-saver/releases/tag/1.12)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 | 3.15        | [1.10](https://github.com/deadalnix/pixel-saver/releases/tag/1.10)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 | 3.14        | [1.5.1](https://github.com/deadalnix/pixel-saver/releases/tag/1.5.1) | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 | 3.12        | [1.3](https://github.com/deadalnix/pixel-saver/releases/tag/1.3)     | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
