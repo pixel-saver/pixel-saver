@@ -30,6 +30,7 @@ Get it!
 
 | Gnome Shell version| Pixel saver version                                           | Recommended installation method  |
 |-------------|----------------------------------------------------------------------|--------------|
+| 3.38        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual   
 | 3.36        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual   
 | 3.34        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual
 | 3.32        | [1.20](https://github.com/deadalnix/pixel-saver/releases/tag/1.20)   | Manual
@@ -72,8 +73,8 @@ In the meantime, you can install the extension manually.
     # Enter cloned directory
     cd pixel-saver
 
-    # Switch to tag 1.20
-    git checkout tags/1.20
+    # Switch to the proper tag
+    git checkout tags/1.24
 
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
