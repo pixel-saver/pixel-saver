@@ -79,6 +79,9 @@ In the meantime, you can install the extension manually.
     # copy to extensions directory
     cp -r pixel-saver@deadalnix.me -t ~/.local/share/gnome-shell/extensions
 
+    # You may need to reload GNOME Shell to recognise new extension by
+    # hitting Alt + F2 and entering "r"
+
     # activate 
     # GNOME <3.38
     gnome-shell-extension-tool -e pixel-saver@deadalnix.me
@@ -86,9 +89,6 @@ In the meantime, you can install the extension manually.
     gnome-extensions enable pixel-saver@deadalnix.me
 
 ```
-
-At last, remember to reload GNOME Shell
-by pressing <kbd>Alt</kbd> + <kbd>F2</kbd> and entering <kbd>r</kbd> .
 
 ### Dependencies
 
