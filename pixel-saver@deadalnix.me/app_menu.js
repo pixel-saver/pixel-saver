@@ -36,8 +36,8 @@ function updateAppMenu() {
 	}
 	
 	if (title.length > 64) {
-     title = title.substr(0, 62) + '...';
-  }
+                title = title.substr(0, 62) + '...';
+        }
 	title = title.replace(/\n/g, " ");
 
 	LOG('Override title ' + title);
