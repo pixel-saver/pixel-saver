@@ -94,6 +94,30 @@ present on your system, these can be installed using:
 * Fedora/RHEL: `dnf install xorg-x11-utils`
 * Arch: `pacman -S xorg-xprop`
 
+Wayland
+---------
+Since this extension relies on features provided by X.org, by default it won't work on GTK 3.x+ windows
+in wayland sessions.
+Neverthless, you can still run any GTK application in x11 mode setting 
+the `GDK_BACKEND` variable to `x11`, *i.e.*
+
+```console
+GDK_BACKEND=x11 <application_name>
+```
+
+on the opposite, QT applications need the variable `QT_QPA_PLATFORM` to be set to `wayland`
+to not run in x11 mode.
+
+If you need a particular program to always run in a given mode, copy its desktop file from 
+`/usr/share/applications` to your user XDG applications directory (`~/.local/share/applications`) 
+and edit the `Exec` line to look like this one
+
+```
+Exec=env GDK_BACKEND=x11 <your_application>
+```
+
+then run `update-desktop-database` to refresh menu entries.
+
 Configuration
 -------------
 
