@@ -28,9 +28,10 @@ It is largely inspired by [bios and mathematicalcoffee's Window Buttons Extensio
 Get it!
 ------------
 
-| Gnome Shell version| Pixel saver version                                           | Recommended installation method  |
-|-------------|----------------------------------------------------------------------|--------------|
-| 3.38        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual   
+| Gnome Shell version| Pixel saver version                                           | Recommended installation method                                            |
+|-------------|----------------------------------------------------------------------|----------------------------------------------------------------------------|
+| 40          | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual   
+| 3.38        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 | 3.36        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 | 3.34        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 | 3.32        | [1.20](https://github.com/deadalnix/pixel-saver/releases/tag/1.20)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
@@ -44,13 +45,7 @@ Get it!
 Pixel saver has been available for a long time on 
 [GNOME Extensions website](https://extensions.gnome.org/extension/723/pixel-saver/) 
 (so it is on 
-[GNOME Software](https://wiki.gnome.org/Apps/Software), too),
-but it has not been updated there since 2016.
-
-*New* releases are in process of being [reviewed](https://extensions.gnome.org/review) (see #177).
-
-In the meantime, you can install the extension manually.
-
+[GNOME Software](https://wiki.gnome.org/Apps/Software), too).
 
 ### Manual install
 
@@ -102,7 +97,7 @@ present on your system, these can be installed using:
 Configuration
 -------------
 
-Don't be silly!
+Soon!
 
 Screenshots
 -----------
