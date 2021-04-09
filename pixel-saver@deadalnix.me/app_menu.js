@@ -3,6 +3,7 @@ const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
+const Clutter = imports.gi.Clutter;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
