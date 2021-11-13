@@ -14,23 +14,32 @@ but the application title is still displayed in the top panel to achieve a
 uniform appearance.
 
 <table>
-	<tr>
-		<td><img src="https://raw.github.com/deadalnix/pixel-saver/master/resources/title.png" /></td>
-		<td><img src="https://raw.github.com/deadalnix/pixel-saver/master/resources/icons.png" /></td>
-	</tr>
-	<tr>
-		<td colspan="2">The title bar is completely gone and integrated to the activity bar.</td>
-	</tr>
+  <tr>
+    <td>
+      <img src="https://raw.github.com/deadalnix/pixel-saver/master/resources/title.png" />
+    </td>
+    <td>
+      <img src="https://raw.github.com/deadalnix/pixel-saver/master/resources/icons.png" /></td>
+  </tr>
+  <tr>
+    <td colspan="2">The title bar is completely gone and integrated to the activity bar.</td>
+  </tr>
 </table>
 
-It is largely inspired by [bios and mathematicalcoffee's Window Buttons Extension](https://github.com/mathematicalcoffee/Gnome-Shell-Window-Buttons-Extension) and [mathematicalcoffee's maximus extension](https://bitbucket.org/mathematicalcoffee/maximus-gnome-shell-extension) and some code come from there. You may want to check theses out, especially if you want something more configurable.
+It is largely inspired by 
+[bios and mathematicalcoffee's Window Buttons Extension](https://github.com/mathematicalcoffee/Gnome-Shell-Window-Buttons-Extension) 
+and 
+[mathematicalcoffee's maximus extension](https://bitbucket.org/mathematicalcoffee/maximus-gnome-shell-extension) 
+and some code come from there. 
+You may want to check theses out, especially if you want something more configurable.
 
 Get it!
 ------------
 
 | Gnome Shell version| Pixel saver version                                           | Recommended installation method                                            |
 |-------------|----------------------------------------------------------------------|----------------------------------------------------------------------------|
-| 40          | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | Manual   
+| 41          | [1.26](https://github.com/deadalnix/pixel-saver/releases/tag/1.26)   | Manual   
+| 40          | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)   
 | 3.38        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 | 3.36        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
 | 3.34        | [1.24](https://github.com/deadalnix/pixel-saver/releases/tag/1.24)   | [GNOME extensions](https://extensions.gnome.org/extension/723/pixel-saver/)
