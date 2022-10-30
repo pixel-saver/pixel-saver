@@ -111,7 +111,7 @@ in wayland sessions.
 Neverthless, you can still run any GTK application in x11 mode setting 
 the `GDK_BACKEND` variable to `x11`, *i.e.*
 
-```console
+```bash
 GDK_BACKEND=x11 <application_name>
 ```
 
@@ -120,10 +120,24 @@ to not run in x11 mode.
 
 If you need a particular program to always run in a given mode, copy its desktop file from 
 `/usr/share/applications` to your user XDG applications directory (`~/.local/share/applications`) 
-and edit the `Exec` line to look like this one
+and edit the `Exec` line to look like this one: `Exec=env GDK_BACKEND=x11 <your_application>`
 
+```console
+# use this to make a backup of your local applications, on the first run
+mkdir ~/backup
+cp -ax ~/.local/share/applications/ ~/backup/local_share_applications/
 ```
-Exec=env GDK_BACKEND=x11 <your_application>
+
+```console
+# copy/update system applications
+cp --remove-destination /usr/share/applications/* ~/.local/share/applications/
+
+# copy local applications from backup
+cp -ax --remove-destination ~/backup/local_share_applications/* ~/.local/share/applications/
+
+# patch files which are not already patched
+cd ~/.local/share/applications/
+sed -i '/env GDK_BACKEND=x11 /!s/Exec=/Exec=env GDK_BACKEND=x11 /' *.desktop
 ```
 
 then run `update-desktop-database` to refresh menu entries.
