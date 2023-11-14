@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg7384"
+   version="1.1"
+   height="16"
+   width="16"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="close.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1366"
+     inkscape:window-height="741"
+     id="namedview15"
+     showgrid="false"
+     inkscape:zoom="22.627417"
+     inkscape:cx="3.0690967"
+     inkscape:cy="6.9078951"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g845"
+     units="px"
+     inkscape:pagecheckerboard="true" />
+  <title
+     id="title9167">Gnome Symbolic Icon Theme</title>
+  <metadata
+     id="metadata90">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Gnome Symbolic Icon Theme</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs7386" />
+  <g
+     id="g845"
+     transform="matrix(1.1666667,0,0,1.1666667,-0.1666669,-0.1666669)">
+    <g
+       id="g855">
+      <g
+         transform="translate(-60,-520.00002)"
+         id="layer9"
+         style="display:inline" />
+      <g
+         transform="translate(-60,-520.00002)"
+         id="layer10" />
+      <g
+         transform="translate(-60,-520.00002)"
+         id="layer11" />
+      <g
+         transform="translate(-60,-520.00002)"
+         id="layer13" />
+      <g
+         transform="translate(-60,-520.00002)"
+         id="layer14" />
+      <g
+         transform="translate(-60,-520.00002)"
+         id="layer15" />
+      <circle
+         style="opacity:1;fill:#e95420;fill-opacity:1;stroke:none;stroke-width:1.48029888;stroke-opacity:1"
+         id="path835"
+         cx="7"
+         cy="7"
+         r="6" />
+      <path
+         id="path1935"
+         overflow="visible"
+         font-weight="400"
+         style="color:#000000;font-weight:400;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;white-space:normal;shape-padding:0;overflow:visible;isolation:auto;mix-blend-mode:normal;fill:#ffffff;fill-rule:evenodd;stroke-width:0.73385519"
+         d="M 4.6479941,4.0000001 4,4.6479941 4.1078766,4.755137 6.352006,7 4.1086104,9.2448628 4.0007338,9.3520063 4.6487279,9.9999999 4.7558707,9.8921229 7,7.6479941 9.244862,9.8921229 9.3520061,9.9999999 10,9.3520063 9.892123,9.2448628 7.647994,7.0000001 9.892123,4.755137 10,4.6479941 9.3520061,4.0000001 9.244862,4.1078768 7,6.3520058 4.7551368,4.1086107 Z"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+</svg>
