@@ -1,0 +1,9 @@
+{
+	"uuid": "pixel-saver-g45@deadalnix.me",
+	"name": "Pixel Saver G45",
+	"description": "Pixel Saver is designed to save pixel by fusing activity bar and title bar in a natural way",
+	"url": "https://github.com/deadalnix/pixel-saver",
+	"shell-version": [
+		"45"
+	]
+}
