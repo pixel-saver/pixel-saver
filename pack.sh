@@ -1,5 +1,11 @@
 #!/bin/bash
 
-cd pixel-saver@deadalnix.me
-zip ../pixelsaver.zip -r *
+function pack {
+    cd $1@deadalnix.me
+    zip ../$1.zip -r *
+    cd ..
+    zip $1.zip -ur themes
+}
 
+pack pixel-saver
+pack pixel-saver-g45

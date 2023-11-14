@@ -43,28 +43,27 @@
  * [5]:http://www.webupd8.org/2011/05/how-to-remove-maximized-windows.html
  *
  */
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Decoration = Me.imports.decoration;
-const Buttons = Me.imports.buttons;
-const AppMenu = Me.imports.app_menu;
-const Main = imports.ui.main
+import * as Decoration from "./decoration.js";
+import * as Buttons from "./buttons.js";
+// import * as AppMenu from "./app_menu.js";  // doesn't work yet due to the app menu being undefined
+import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
-function init(extensionMeta) {
-	Buttons.init(extensionMeta);
-	Decoration.init(extensionMeta);
-	AppMenu.init(extensionMeta);
+export default class PixelSaver extends Extension {
+    init(extensionMeta) {
+        Buttons.init(extensionMeta);
+        Decoration.init(extensionMeta);
+        // AppMenu.init(extensionMeta);
+    }
+
+    enable() {
+        Buttons.enable();
+        Decoration.enable();
+        // AppMenu.enable();
+    }
+
+    disable() {
+        // AppMenu.disable();
+        Decoration.disable();
+        Buttons.disable();
+    }
 }
-
-function enable() {
-	Buttons.enable();
-	Decoration.enable();
-	AppMenu.enable();
-}
-
-function disable() {
-	AppMenu.disable();
-	Decoration.disable();
-	Buttons.disable();
-}
-
